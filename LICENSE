@@ -202,7 +202,7 @@
 
 --------------------------------------------------------------------------
 
-Code in ludwig/api_annotations.py adapted from
+Code in theflow/api_annotations.py adapted from
 https://github.com/ray-project/ray (Apache-2.0 License)
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -219,7 +219,7 @@ limitations under the License.
 
 --------------------------------------------------------------------------
 
-Code in ludwig/utils/structural_warnings.py adapted from
+Code in theflow/utils/structural_warnings.py adapted from
 https://github.com/ray-project/ray (Apache-2.0 License)
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -236,7 +236,7 @@ limitations under the License.
 
 --------------------------------------------------------------------------
 
-Code in ludwig/utils/logging_utils.py adapted from
+Code in theflow/utils/logging_utils.py adapted from
 https://github.com/ray-project/ray (Apache-2.0 License)
 
 Licensed under the Apache License, Version 2.0 (the "License");

@@ -5,8 +5,8 @@ import pandas as pd
 import pytest
 from dateutil.parser import parse
 
-from ludwig.api import LudwigModel
-from ludwig.constants import (
+from theflow.api import The FlowModel
+from theflow.constants import (
     BACKEND,
     BINARY,
     DATE,
@@ -21,7 +21,7 @@ from ludwig.constants import (
     TRAINER,
     TYPE,
 )
-from ludwig.utils.date_utils import create_vector_from_datetime_obj
+from theflow.utils.date_utils import create_vector_from_datetime_obj
 
 ray = pytest.importorskip("ray")
 
@@ -89,7 +89,7 @@ def test_date_feature_formats(date_df, request, ray_cluster_2cpu):
 
     fill_value = create_vector_from_datetime_obj(parse("1970-01-01 00:00:00"))
 
-    model = LudwigModel(config)
+    model = The FlowModel(config)
     preprocessed = model.preprocess(df)
 
     # Because parsing errors are suppressed, we want to ensure that the data was preprocessed correctly. Sample data is

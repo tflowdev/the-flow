@@ -6,10 +6,10 @@ import pandas as pd
 import yaml
 from datasets import load_dataset
 
-from ludwig.api import LudwigModel
+from theflow.api import The FlowModel
 
 """
-To inspect model layers in the terminal, type: "ludwig collect_summary -pm resnet18"
+To inspect model layers in the terminal, type: "theflow collect_summary -pm resnet18"
 
 For some models, a HuggingFace Token will be necessary.
 Once you obtain one, use "export HUGGING_FACE_HUB_TOKEN="<api_token>"" in the terminal.
@@ -58,7 +58,7 @@ trainer:
     """
 )
 
-model = LudwigModel(config, logging_level=logging.INFO)
+model = The FlowModel(config, logging_level=logging.INFO)
 train_stats = model.train(dataset="beans_train.csv", skip_save_model=True)
 eval_stats, predictions, output_directory = model.evaluate(dataset="beans_test.csv")
 

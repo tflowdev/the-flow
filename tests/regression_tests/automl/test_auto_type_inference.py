@@ -5,13 +5,13 @@ import pytest
 from tests.regression_tests.automl.utils import get_dataset_golden_types_path, get_dataset_object, TEST_DATASET_REGISTRY
 
 try:
-    from ludwig.automl import create_auto_config
+    from theflow.automl import create_auto_config
 except ImportError:
     pass
 
 
 @pytest.mark.slow
-@pytest.mark.distributed  # ludwig.automl has a dependency on ray
+@pytest.mark.distributed  # theflow.automl has a dependency on ray
 @pytest.mark.parametrize("dataset_name", TEST_DATASET_REGISTRY)
 def test_auto_type_inference_regression(dataset_name):
     golden_types_path = get_dataset_golden_types_path(dataset_name)

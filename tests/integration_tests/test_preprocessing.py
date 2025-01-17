@@ -12,11 +12,11 @@ import pytest
 from PIL import Image
 from transformers import AutoTokenizer
 
-import ludwig
-from ludwig.api import LudwigModel
-from ludwig.backend import initialize_backend
-from ludwig.callbacks import Callback
-from ludwig.constants import (
+import theflow
+from theflow.api import The FlowModel
+from theflow.backend import initialize_backend
+from theflow.callbacks import Callback
+from theflow.constants import (
     BASE_MODEL,
     BATCH_SIZE,
     COLUMN,
@@ -36,10 +36,10 @@ from ludwig.constants import (
     TRAINER,
     TYPE,
 )
-from ludwig.data.concatenate_datasets import concatenate_df
-from ludwig.data.preprocessing import handle_features_with_prompt_config, preprocess_for_prediction
-from ludwig.schema.llms.prompt import PromptConfig
-from ludwig.schema.model_types.base import ModelConfig
+from theflow.data.concatenate_datasets import concatenate_df
+from theflow.data.preprocessing import handle_features_with_prompt_config, preprocess_for_prediction
+from theflow.schema.llms.prompt import PromptConfig
+from theflow.schema.model_types.base import ModelConfig
 from tests.integration_tests.utils import (
     assert_preprocessed_dataset_shape_and_dtype_for_feature,
     audio_feature,
@@ -82,7 +82,7 @@ def test_sample_ratio(backend, tmpdir, ray_cluster_2cpu):
         PREPROCESSING: {"sample_ratio": sample_ratio},
     }
 
-    model = LudwigModel(config, backend=backend)
+    model = The FlowModel(config, backend=backend)
     train_set, val_set, test_set, training_set_metadata = model.preprocess(
         data_csv,
         skip_save_processed_input=True,
@@ -133,13 +133,13 @@ def test_sample_ratio_deterministic(backend, tmpdir, ray_cluster_2cpu):
         PREPROCESSING: {"sample_ratio": sample_ratio},
     }
 
-    model1 = LudwigModel(config, backend=backend)
+    model1 = The FlowModel(config, backend=backend)
     train_set_1, val_set_1, test_set_1, _ = model1.preprocess(
         data_csv,
         skip_save_processed_input=True,
     )
 
-    model2 = LudwigModel(config, backend=backend)
+    model2 = The FlowModel(config, backend=backend)
     train_set_2, val_set_2, test_set_2, _ = model2.preprocess(
         data_csv,
         skip_save_processed_input=True,
@@ -187,7 +187,7 @@ def test_sample_size(backend, tmpdir, ray_cluster_2cpu):
         PREPROCESSING: {"sample_size": sample_size},
     }
 
-    model = LudwigModel(config, backend=backend)
+    model = The FlowModel(config, backend=backend)
     train_set, val_set, test_set, training_set_metadata = model.preprocess(
         data_csv,
         skip_save_processed_input=True,
@@ -237,13 +237,13 @@ def test_sample_size_deterministic(backend, tmpdir, ray_cluster_2cpu):
         PREPROCESSING: {"sample_size": sample_size},
     }
 
-    model1 = LudwigModel(config, backend=backend)
+    model1 = The FlowModel(config, backend=backend)
     train_set_1, val_set_1, test_set_1, _ = model1.preprocess(
         data_csv,
         skip_save_processed_input=True,
     )
 
-    model2 = LudwigModel(config, backend=backend)
+    model2 = The FlowModel(config, backend=backend)
     train_set_2, val_set_2, test_set_2, _ = model2.preprocess(
         data_csv,
         skip_save_processed_input=True,
@@ -280,8 +280,8 @@ def test_strip_whitespace_category(csv_filename, tmpdir):
     df[cat_feat[COLUMN]] = df[cat_feat[COLUMN]].apply(lambda s: " " + s)
 
     # run preprocessing
-    ludwig_model = LudwigModel(config, backend=backend)
-    train_ds, _, _, metadata = ludwig_model.preprocess(dataset=df)
+    theflow_model = The FlowModel(config, backend=backend)
+    train_ds, _, _, metadata = theflow_model.preprocess(dataset=df)
 
     # expect values containing whitespaces to be properly mapped to vocab_size unique values
     assert len(np.unique(train_ds.dataset[cat_feat[PROC_COLUMN]])) == cat_feat[DECODER]["vocab_size"]
@@ -317,7 +317,7 @@ def test_with_split(backend, csv_filename, tmpdir, ray_cluster_2cpu):
         PREPROCESSING: {SPLIT: {TYPE: "fixed", COLUMN: SPLIT}},
     }
 
-    model = LudwigModel(config, backend=backend)
+    model = The FlowModel(config, backend=backend)
     train_set, val_set, test_set, _ = model.preprocess(
         data_csv,
         skip_save_processed_input=False,
@@ -347,7 +347,7 @@ def test_dask_known_divisions(feature_fn, csv_filename, tmpdir, ray_cluster_2cpu
     }
 
     backend = "ray"
-    model = LudwigModel(config, backend=backend)
+    model = The FlowModel(config, backend=backend)
     train_set, val_set, test_set, _ = model.preprocess(
         data_df,
         skip_save_processed_input=False,
@@ -374,7 +374,7 @@ def test_drop_empty_partitions(csv_filename, tmpdir, ray_cluster_2cpu):
     }
 
     backend = "ray"
-    model = LudwigModel(config, backend=backend)
+    model = The FlowModel(config, backend=backend)
     train_set, val_set, test_set, _ = model.preprocess(
         data_df,
         skip_save_processed_input=True,
@@ -399,7 +399,7 @@ def test_read_image_from_path(tmpdir, csv_filename, generate_images_as_numpy):
         TRAINER: {EPOCHS: 2},
     }
 
-    model = LudwigModel(config)
+    model = The FlowModel(config)
     model.preprocess(
         data_csv,
         skip_save_processed_input=False,
@@ -433,7 +433,7 @@ def test_read_image_from_numpy_array(tmpdir, csv_filename):
 
     df_with_images_as_numpy_arrays = pd.DataFrame(processed_df_rows)
 
-    model = LudwigModel(config)
+    model = The FlowModel(config)
     model.preprocess(
         df_with_images_as_numpy_arrays,
         skip_save_processed_input=False,
@@ -447,7 +447,7 @@ def test_read_image_failure_default_image(monkeypatch, tmpdir, csv_filename):
         """Mock read_binary_files to return None (failed image read) to test error handling."""
         return column.map(lambda x: None)
 
-    monkeypatch.setattr(ludwig.backend.base.LocalPreprocessingMixin, "read_binary_files", mock_read_binary_files)
+    monkeypatch.setattr(theflow.backend.base.LocalPreprocessingMixin, "read_binary_files", mock_read_binary_files)
 
     image_feature_config = image_feature(os.path.join(tmpdir, "generated_output"))
     input_features = [image_feature_config]
@@ -463,7 +463,7 @@ def test_read_image_failure_default_image(monkeypatch, tmpdir, csv_filename):
         input_features, output_features, os.path.join(tmpdir, csv_filename), num_examples=NUM_EXAMPLES, nan_percent=0.2
     )
 
-    model = LudwigModel(config)
+    model = The FlowModel(config)
     preprocessed_dataset = model.preprocess(data_csv)
     training_set_metadata = preprocessed_dataset.training_set_metadata
 
@@ -497,8 +497,8 @@ def test_number_feature_wrong_dtype(csv_filename, tmpdir):
 
     # run preprocessing
     backend = LocalTestBackend()
-    ludwig_model = LudwigModel(config, backend=backend)
-    train_ds, val_ds, test_ds, _ = ludwig_model.preprocess(dataset=df)
+    theflow_model = The FlowModel(config, backend=backend)
+    train_ds, val_ds, test_ds, _ = theflow_model.preprocess(dataset=df)
 
     concatenated_df = concatenate_df(train_ds.to_df(), val_ds.to_df(), test_ds.to_df(), backend)
 
@@ -555,8 +555,8 @@ def test_seq_features_max_sequence_length(
             assert training_set_metadata[feat[NAME]]["max_sequence_length"] == sequence_length_expected
 
     backend = LocalTestBackend()
-    ludwig_model = LudwigModel(config, backend=backend, callbacks=[CheckTrainingSetMetadataCallback()])
-    train_ds, val_ds, test_ds, _ = ludwig_model.preprocess(dataset=df)
+    theflow_model = The FlowModel(config, backend=backend, callbacks=[CheckTrainingSetMetadataCallback()])
+    train_ds, val_ds, test_ds, _ = theflow_model.preprocess(dataset=df)
 
     all_df = concatenate_df(train_ds.to_df(), val_ds.to_df(), test_ds.to_df(), backend)
     proc_column_name = feat[PROC_COLUMN]
@@ -582,8 +582,8 @@ def test_column_feature_type_mismatch_fill():
 
     # run preprocessing
     backend = LocalTestBackend()
-    ludwig_model = LudwigModel(config, backend=backend)
-    train_ds, val_ds, test_ds, _ = ludwig_model.preprocess(dataset=df)
+    theflow_model = The FlowModel(config, backend=backend)
+    train_ds, val_ds, test_ds, _ = theflow_model.preprocess(dataset=df)
 
 
 @pytest.mark.parametrize("format", ["file", "df"])
@@ -627,7 +627,7 @@ def test_presplit_override(format, tmpdir):
         PREPROCESSING: {SPLIT: {TYPE: "random"}},
     }
 
-    model = LudwigModel(config, backend=LocalTestBackend())
+    model = The FlowModel(config, backend=LocalTestBackend())
     train_set, val_set, test_set, _ = model.preprocess(
         training_set=train_data, validation_set=val_data, test_set=test_data
     )
@@ -664,9 +664,9 @@ def test_empty_training_set_error(backend, tmpdir, ray_cluster_2cpu):
     # rows, this will result in the dataset being empty after preprocessing.
     df[out_feat[COLUMN]] = None
 
-    ludwig_model = LudwigModel(config, backend=backend)
+    theflow_model = The FlowModel(config, backend=backend)
     with pytest.raises(RuntimeError, match="Training data is empty following preprocessing"):
-        ludwig_model.preprocess(dataset=df)
+        theflow_model.preprocess(dataset=df)
 
 
 @pytest.mark.distributed
@@ -688,8 +688,8 @@ def test_in_memory_dataset_size(backend, tmpdir, ray_cluster_2cpu):
     training_data_csv_path = generate_data(input_features, output_features, data_csv_path)
     df = pd.read_csv(training_data_csv_path)
 
-    ludwig_model = LudwigModel(config, backend=backend)
-    training_dataset, validation_dataset, test_dataset, _ = ludwig_model.preprocess(dataset=df)
+    theflow_model = The FlowModel(config, backend=backend)
+    training_dataset, validation_dataset, test_dataset, _ = theflow_model.preprocess(dataset=df)
 
     assert training_dataset.in_memory_size_bytes > 0
     assert validation_dataset.in_memory_size_bytes > 0
@@ -759,8 +759,8 @@ def test_non_conventional_bool_with_fallback(binary_as_input, expected_preproces
     df = pd.read_csv(training_data_csv_path)
 
     # Preprocess the data.
-    ludwig_model = LudwigModel(config)
-    _, _, _, training_set_metadata = ludwig_model.preprocess(dataset=df)
+    theflow_model = The FlowModel(config)
+    _, _, _, training_set_metadata = theflow_model.preprocess(dataset=df)
 
     # Check that true/false labels are set correctly.
     assert training_set_metadata[bin_feature[NAME]] == {
@@ -796,9 +796,9 @@ def test_non_conventional_bool_without_fallback_logs_warning(binary_as_input, ca
     df = pd.read_csv(training_data_csv_path)
 
     # Preprocess the data.
-    with caplog.at_level(logging.WARN, logger="ludwig.features.binary_feature"):
-        ludwig_model = LudwigModel(config)
-        ludwig_model.preprocess(dataset=df)
+    with caplog.at_level(logging.WARN, logger="theflow.features.binary_feature"):
+        theflow_model = The FlowModel(config)
+        theflow_model.preprocess(dataset=df)
 
     # Check that a warning is logged.
     assert "unconventional boolean value" in caplog.text
@@ -819,9 +819,9 @@ def test_category_feature_vocab_size_1(feature_type, tmpdir) -> None:
 
     training_data_csv_path = generate_data(config[INPUT_FEATURES], config[OUTPUT_FEATURES], data_csv_path)
 
-    ludwig_model = LudwigModel(config)
+    theflow_model = The FlowModel(config)
     with pytest.raises(RuntimeError) if feature_type == "output_feature" else contextlib.nullcontext():
-        ludwig_model.train(dataset=training_data_csv_path)
+        theflow_model.train(dataset=training_data_csv_path)
 
 
 @pytest.mark.parametrize("use_pretrained", [False, True], ids=["false", "true"])
@@ -845,7 +845,7 @@ def test_vit_encoder_different_dimension_image(tmpdir, csv_filename, use_pretrai
         TRAINER: {"train_steps": 1},
     }
 
-    model = LudwigModel(config)
+    model = The FlowModel(config)
 
     # Failure happens post preprocessing but before training during the ECD model creation phase
     # so make sure the model can be created properly and training can proceed
@@ -855,7 +855,7 @@ def test_vit_encoder_different_dimension_image(tmpdir, csv_filename, use_pretrai
 @pytest.mark.skip(
     reason=(
         "Broken against torch nightly: "
-        "https://github.com/ludwig-ai/ludwig/actions/runs/4918126111/jobs/8784071603?pr=3388."
+        "https://github.com/theflow-ai/theflow/actions/runs/4918126111/jobs/8784071603?pr=3388."
     )
 )
 def test_image_encoder_torchvision_different_num_channels(tmpdir, csv_filename):
@@ -878,7 +878,7 @@ def test_image_encoder_torchvision_different_num_channels(tmpdir, csv_filename):
         TRAINER: {"train_steps": 1},
     }
 
-    model = LudwigModel(config)
+    model = The FlowModel(config)
 
     # Failure happens post preprocessing but before training during the ECD model creation phase
     # so make sure the model can be created properly and training can proceed
@@ -912,8 +912,8 @@ def test_fill_with_mode_different_df_engine(tmpdir, csv_filename, df_engine, ray
         # Only support Dask on Ray backend
         config["backend"] = {TYPE: "ray"}
 
-    ludwig_model = LudwigModel(config)
-    ludwig_model.preprocess(dataset=df)
+    theflow_model = The FlowModel(config)
+    theflow_model.preprocess(dataset=df)
 
 
 template_task_sample = """
@@ -1009,7 +1009,7 @@ def test_prompt_template(input_features, expected, model_type, backend, tmpdir, 
             "pretrained_model_name_or_path": model_name,
         }
 
-    model = LudwigModel(config, backend=backend)
+    model = The FlowModel(config, backend=backend)
     train_set, _, _, _ = model.preprocess(
         training_set=data_csv,
         skip_save_processed_input=True,
@@ -1091,7 +1091,7 @@ def test_handle_features_with_few_shot_prompt_config(backend, retrieval_kwargs, 
 
     if backend == "local":
         context = mock.patch(
-            "ludwig.models.retrieval.SemanticRetrieval._encode",
+            "theflow.models.retrieval.SemanticRetrieval._encode",
             side_effect=lambda row_strs, _: np.random.rand(len(row_strs), 16).astype(np.float32),
         )
     else:

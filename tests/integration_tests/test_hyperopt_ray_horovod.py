@@ -19,22 +19,22 @@ from unittest.mock import patch
 
 import pytest
 
-from ludwig.api import LudwigModel
-from ludwig.callbacks import Callback
-from ludwig.constants import ACCURACY, AUTO, BATCH_SIZE, EXECUTOR, MAX_CONCURRENT_TRIALS, TRAINER
-from ludwig.globals import HYPEROPT_STATISTICS_FILE_NAME
-from ludwig.hyperopt.results import HyperoptResults
-from ludwig.hyperopt.run import hyperopt
-from ludwig.hyperopt.utils import update_hyperopt_params_with_defaults
-from ludwig.schema.model_config import ModelConfig
+from theflow.api import The FlowModel
+from theflow.callbacks import Callback
+from theflow.constants import ACCURACY, AUTO, BATCH_SIZE, EXECUTOR, MAX_CONCURRENT_TRIALS, TRAINER
+from theflow.globals import HYPEROPT_STATISTICS_FILE_NAME
+from theflow.hyperopt.results import HyperoptResults
+from theflow.hyperopt.run import hyperopt
+from theflow.hyperopt.utils import update_hyperopt_params_with_defaults
+from theflow.schema.model_config import ModelConfig
 from tests.integration_tests.utils import binary_feature, create_data_set_to_use, generate_data, number_feature
 
 try:
     import ray
     from ray.tune.syncer import get_node_to_storage_syncer, SyncConfig
 
-    from ludwig.backend.ray import RayBackend
-    from ludwig.hyperopt.execution import _get_relative_checkpoints_dir_parts, RayTuneExecutor
+    from theflow.backend.ray import RayBackend
+    from theflow.hyperopt.execution import _get_relative_checkpoints_dir_parts, RayTuneExecutor
 except ImportError:
     ray = None
     RayTuneExecutor = object
@@ -92,7 +92,7 @@ SCENARIOS = [
         },
         "search_alg": {"type": "bohb"},
     },
-    # TODO(shreya): Uncomment when https://github.com/ludwig-ai/ludwig/issues/2039 is fixed.
+    # TODO(shreya): Uncomment when https://github.com/theflow-ai/theflow/issues/2039 is fixed.
     # {
     #     "type": "ray",
     #     "num_samples": 1,
@@ -119,7 +119,7 @@ SCENARIOS = [
 # (since some trials are executed in sequence instead of all at once).
 #
 # Setting parallelism to 1 here ensures that the number of CPUs requested by Ray Datasets is limited to 1 per trial.
-# For more context, see https://github.com/ludwig-ai/ludwig/pull/2709/files#r1042812690
+# For more context, see https://github.com/theflow-ai/theflow/pull/2709/files#r1042812690
 RAY_BACKEND_KWARGS = {"processor": {"parallelism": 1}}
 
 
@@ -211,7 +211,7 @@ def run_hyperopt_executor(
     search_alg = hyperopt_config["search_alg"]
 
     # preprocess
-    model = LudwigModel(config=config, backend=backend)
+    model = The FlowModel(config=config, backend=backend)
     training_set, validation_set, test_set, training_set_metadata = model.preprocess(
         dataset=dataset_parquet,
     )
@@ -253,7 +253,7 @@ def test_hyperopt_executor_bohb(csv_filename, ray_mock_dir, ray_cluster_7cpu):
 
 
 @pytest.mark.distributed
-@pytest.mark.skip(reason="https://github.com/ludwig-ai/ludwig/issues/1441")
+@pytest.mark.skip(reason="https://github.com/theflow-ai/theflow/issues/1441")
 @pytest.mark.distributed
 def test_hyperopt_executor_with_metric(csv_filename, ray_mock_dir, ray_cluster_7cpu):
     run_hyperopt_executor(
@@ -266,9 +266,9 @@ def test_hyperopt_executor_with_metric(csv_filename, ray_mock_dir, ray_cluster_7
     )
 
 
-@pytest.mark.skip(reason="https://github.com/ludwig-ai/ludwig/issues/1441")
+@pytest.mark.skip(reason="https://github.com/theflow-ai/theflow/issues/1441")
 @pytest.mark.distributed
-@patch("ludwig.hyperopt.execution.RayTuneExecutor", MockRayTuneExecutor)
+@patch("theflow.hyperopt.execution.RayTuneExecutor", MockRayTuneExecutor)
 def test_hyperopt_run_hyperopt(csv_filename, ray_mock_dir, ray_cluster_7cpu):
     input_features = [number_feature()]
     output_features = [binary_feature()]

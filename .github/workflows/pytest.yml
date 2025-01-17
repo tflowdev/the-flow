@@ -49,7 +49,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.LUDWIG_TESTS_AWS_SECRET_ACCESS_KEY }}
       KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
       KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
-      IS_NOT_FORK: ${{ !(github.event.pull_request.base.repo.full_name == 'ludwig-ai/ludwig' && github.event.pull_request.head.repo.fork) }}
+      IS_NOT_FORK: ${{ !(github.event.pull_request.base.repo.full_name == 'theflow-ai/theflow' && github.event.pull_request.head.repo.fork) }}
 
     name: py${{ matrix.python-version  }}, torch-${{ matrix.pytorch-version }}, ${{ matrix.test-markers }}, ${{ matrix.os }}, ray ${{ matrix.ray-version }}
     services:
@@ -63,7 +63,7 @@ jobs:
 
     timeout-minutes: 150
     steps:
-      - name: Setup ludwigai/ludwig-ray container for local testing with act.
+      - name: Setup theflowai/theflow-ray container for local testing with act.
         if: ${{ env.ACT }}
         run: |
           curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
@@ -158,14 +158,14 @@ jobs:
 
       - name: Unit Tests
         run: |
-          RUN_PRIVATE=$IS_NOT_FORK LUDWIG_TEST_SUITE_TIMEOUT_S=5400 pytest -v --timeout 300 --durations 100 -m "$MARKERS and not slow and not combinatorial and not horovod and not llm" --junitxml pytest.xml tests/ludwig
+          RUN_PRIVATE=$IS_NOT_FORK LUDWIG_TEST_SUITE_TIMEOUT_S=5400 pytest -v --timeout 300 --durations 100 -m "$MARKERS and not slow and not combinatorial and not horovod and not llm" --junitxml pytest.xml tests/theflow
 
       - name: Regression Tests
         run: |
           RUN_PRIVATE=$IS_NOT_FORK LUDWIG_TEST_SUITE_TIMEOUT_S=5400 pytest -v --timeout 300 --durations 100 -m "$MARKERS and not slow and not combinatorial and not horovod or benchmark and not llm" --junitxml pytest.xml tests/regression_tests
 
       # Skip Horovod and replace with DDP.
-      # https://github.com/ludwig-ai/ludwig/issues/3468
+      # https://github.com/theflow-ai/theflow/issues/3468
       # - name: Install Horovod if necessary
       #   if: matrix.test-markers == 'distributed' && matrix.pytorch-version != 'nightly'
       #   env:
@@ -184,7 +184,7 @@ jobs:
       #   shell: bash
 
       # Skip Horovod tests and replace with DDP.
-      # https://github.com/ludwig-ai/ludwig/issues/3468
+      # https://github.com/theflow-ai/theflow/issues/3468
       # - name: Horovod Tests
       #   if: matrix.test-markers == 'distributed' && matrix.pytorch-version != 'nightly'
       #   run: |
@@ -216,7 +216,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.LUDWIG_TESTS_AWS_SECRET_ACCESS_KEY }}
       KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
       KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
-      IS_NOT_FORK: ${{ !(github.event.pull_request.base.repo.full_name == 'ludwig-ai/ludwig' && github.event.pull_request.head.repo.fork) }}
+      IS_NOT_FORK: ${{ !(github.event.pull_request.base.repo.full_name == 'theflow-ai/theflow' && github.event.pull_request.head.repo.fork) }}
       MARKERS: ${{ matrix.test-markers }}
 
     services:
@@ -355,7 +355,7 @@ jobs:
 
       - name: Testing combinatorial config generation code
         run: |
-          pytest -vs --durations 100 -m "combinatorial" --junitxml pytest.xml tests/ludwig/config_sampling
+          pytest -vs --durations 100 -m "combinatorial" --junitxml pytest.xml tests/theflow/config_sampling
 
       - name: Combinatorial Tests
         run: |
@@ -395,7 +395,7 @@ jobs:
         shell: bash
       - name: Check Install
         run: |
-          ludwig check_install
+          theflow check_install
         shell: bash
 
       - name: Test Getting Started
@@ -407,9 +407,9 @@ jobs:
   #   name: Start self-hosted EC2 runner
   #   if: >
   #     always() && needs.pytest.result != 'failure' && (
-  #     github.event_name == 'schedule' && github.repository == 'ludwig-ai/ludwig' ||
-  #     github.event_name == 'push' && github.repository == 'ludwig-ai/ludwig' ||
-  #     github.event_name == 'pull_request' && github.event.pull_request.base.repo.full_name == 'ludwig-ai/ludwig' && !github.event.pull_request.head.repo.fork)
+  #     github.event_name == 'schedule' && github.repository == 'theflow-ai/theflow' ||
+  #     github.event_name == 'push' && github.repository == 'theflow-ai/theflow' ||
+  #     github.event_name == 'pull_request' && github.event.pull_request.base.repo.full_name == 'theflow-ai/theflow' && !github.event.pull_request.head.repo.fork)
   #   needs: pytest
   #   runs-on: ubuntu-latest
   #   outputs:
@@ -436,7 +436,7 @@ jobs:
   #         security-group-id: sg-4cba0d08
   #         aws-resource-tags: >
   #           [
-  #             {"Key": "Name", "Value": "ludwig-github-${{ github.head_ref || github.sha }}"},
+  #             {"Key": "Name", "Value": "theflow-github-${{ github.head_ref || github.sha }}"},
   #             {"Key": "GitHubRepository", "Value": "${{ github.repository }}"},
   #             {"Key": "GitHubHeadRef", "Value": "${{ github.head_ref }}"},
   #             {"Key": "GitHubSHA", "Value": "${{ github.sha }}"}

@@ -3,12 +3,12 @@ import os
 import pytest
 import yaml
 
-from ludwig.api import LudwigModel
-from ludwig.backend import initialize_backend
-from ludwig.constants import BATCH_SIZE, TRAINER
-from ludwig.globals import DESCRIPTION_FILE_NAME, MODEL_FILE_NAME, MODEL_WEIGHTS_FILE_NAME
-from ludwig.utils import fs_utils
-from ludwig.utils.data_utils import use_credentials
+from theflow.api import The FlowModel
+from theflow.backend import initialize_backend
+from theflow.constants import BATCH_SIZE, TRAINER
+from theflow.globals import DESCRIPTION_FILE_NAME, MODEL_FILE_NAME, MODEL_WEIGHTS_FILE_NAME
+from theflow.utils import fs_utils
+from theflow.utils.data_utils import use_credentials
 from tests.integration_tests.utils import (
     category_feature,
     generate_data,
@@ -31,7 +31,7 @@ pytestmark = pytest.mark.integration_tests_b
 )
 @pytest.mark.parametrize(
     "fs_protocol,bucket,creds",
-    [("file", None, None), private_param(("s3", "ludwig-tests", minio_test_creds()))],
+    [("file", None, None), private_param(("s3", "theflow-tests", minio_test_creds()))],
     ids=["file", "s3"],
 )
 def test_remote_training_set(csv_filename, fs_protocol, bucket, creds, backend, ray_cluster_2cpu):
@@ -66,7 +66,7 @@ def test_remote_training_set(csv_filename, fs_protocol, bucket, creds, backend, 
             backend = initialize_backend(backend_config)
 
             output_directory = os.path.join(tmpdir, "output")
-            model = LudwigModel(config_path, backend=backend)
+            model = The FlowModel(config_path, backend=backend)
             _, _, output_run_directory = model.train(
                 training_set=train_csv, validation_set=val_csv, test_set=test_csv, output_directory=output_directory
             )

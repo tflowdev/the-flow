@@ -1,7 +1,7 @@
 import logging
 from typing import Dict, Tuple
 
-from ludwig.constants import (
+from theflow.constants import (
     BATCH_SIZE,
     CATEGORY,
     COMBINER,
@@ -18,12 +18,12 @@ from ludwig.constants import (
     TRAINER,
     TYPE,
 )
-from ludwig.schema.model_config import ModelConfig
+from theflow.schema.model_config import ModelConfig
 from tests.integration_tests.utils import category_feature, generate_data, run_experiment, text_feature
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-logging.getLogger("ludwig").setLevel(logging.INFO)
+logging.getLogger("theflow").setLevel(logging.INFO)
 
 
 def _prepare_data(csv_filename: str) -> Tuple[Dict, str]:

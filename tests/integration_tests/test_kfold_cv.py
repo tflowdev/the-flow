@@ -6,10 +6,10 @@ from collections import namedtuple
 import pytest
 import yaml
 
-from ludwig.api import kfold_cross_validate
-from ludwig.constants import BATCH_SIZE, TRAINER
-from ludwig.experiment import kfold_cross_validate_cli
-from ludwig.utils.data_utils import load_json
+from theflow.api import kfold_cross_validate
+from theflow.constants import BATCH_SIZE, TRAINER
+from theflow.experiment import kfold_cross_validate_cli
+from theflow.utils.data_utils import load_json
 from tests.integration_tests.utils import (
     binary_feature,
     category_feature,
@@ -22,7 +22,7 @@ from tests.integration_tests.utils import (
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-logging.getLogger("ludwig").setLevel(logging.INFO)
+logging.getLogger("theflow").setLevel(logging.INFO)
 
 FeaturesToUse = namedtuple("FeaturesToUse", "input_features output_features")
 

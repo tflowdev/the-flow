@@ -8,10 +8,10 @@ import pandas as pd
 import pytest
 import torch
 
-from ludwig import globals as global_vars
-from ludwig.api import LudwigModel
-from ludwig.backend import LOCAL_BACKEND
-from ludwig.constants import (
+from theflow import globals as global_vars
+from theflow.api import The FlowModel
+from theflow.backend import LOCAL_BACKEND
+from theflow.constants import (
     BATCH_SIZE,
     CATEGORY,
     DEFAULTS,
@@ -22,14 +22,14 @@ from ludwig.constants import (
     TRAINER,
     TRAINING,
 )
-from ludwig.contribs.mlflow import MlflowCallback
-from ludwig.experiment import experiment_cli
-from ludwig.features.number_feature import numeric_transformation_registry
-from ludwig.globals import DESCRIPTION_FILE_NAME, MODEL_FILE_NAME, MODEL_WEIGHTS_FILE_NAME, TRAINING_PREPROC_FILE_NAME
-from ludwig.schema.optimizers import optimizer_registry
-from ludwig.utils.data_utils import load_json, replace_file_extension
-from ludwig.utils.misc_utils import get_from_registry
-from ludwig.utils.package_utils import LazyLoader
+from theflow.contribs.mlflow import MlflowCallback
+from theflow.experiment import experiment_cli
+from theflow.features.number_feature import numeric_transformation_registry
+from theflow.globals import DESCRIPTION_FILE_NAME, MODEL_FILE_NAME, MODEL_WEIGHTS_FILE_NAME, TRAINING_PREPROC_FILE_NAME
+from theflow.schema.optimizers import optimizer_registry
+from theflow.utils.data_utils import load_json, replace_file_extension
+from theflow.utils.misc_utils import get_from_registry
+from theflow.utils.package_utils import LazyLoader
 from tests.integration_tests import synthetic_test_data
 from tests.integration_tests.utils import category_feature, generate_data, LocalTestBackend
 
@@ -263,7 +263,7 @@ def test_optimizers(optimizer_type, tmp_path):
     if optimizer_type == "lbfgs":
         config[TRAINER]["learning_rate"] = 0.05
 
-    model = LudwigModel(config)
+    model = The FlowModel(config)
 
     # create sub-directory to store results
     results_dir = tmp_path / "results"
@@ -375,12 +375,12 @@ def test_cache_checksum(csv_filename, tmp_path):
 
     # conduct initial training
     output_directory = os.path.join(tmp_path, "results")
-    model = LudwigModel(config, backend=backend)
+    model = The FlowModel(config, backend=backend)
     model.train(dataset=source_dataset, output_directory=output_directory)
     first_training_timestamp = os.path.getmtime(cache_fname)
 
     # conduct second training, should not force recreating hdf5
-    model = LudwigModel(config, backend=backend)
+    model = The FlowModel(config, backend=backend)
     model.train(dataset=source_dataset, output_directory=output_directory)
     current_training_timestamp = os.path.getmtime(cache_fname)
 
@@ -390,7 +390,7 @@ def test_cache_checksum(csv_filename, tmp_path):
     # force recreating cache file by changing checksum by updating defaults
     prior_training_timestamp = current_training_timestamp
     config[DEFAULTS][CATEGORY][PREPROCESSING]["fill_value"] = "<EMPTY>"
-    model = LudwigModel(config, backend=backend)
+    model = The FlowModel(config, backend=backend)
     model.train(dataset=source_dataset, output_directory=output_directory)
     current_training_timestamp = os.path.getmtime(cache_fname)
 
@@ -400,7 +400,7 @@ def test_cache_checksum(csv_filename, tmp_path):
     # force recreating cache by updating modification time of source dataset
     prior_training_timestamp = current_training_timestamp
     os.utime(source_dataset)
-    model = LudwigModel(config, backend=backend)
+    model = The FlowModel(config, backend=backend)
     model.train(dataset=source_dataset, output_directory=output_directory)
     current_training_timestamp = os.path.getmtime(cache_fname)
 
@@ -412,7 +412,7 @@ def test_cache_checksum(csv_filename, tmp_path):
     input_features = config[INPUT_FEATURES].copy()
     input_features[0][PREPROCESSING] = {"lowercase": True}
     config[INPUT_FEATURES] = input_features
-    model = LudwigModel(config, backend=backend)
+    model = The FlowModel(config, backend=backend)
     model.train(dataset=source_dataset, output_directory=output_directory)
     current_training_timestamp = os.path.getmtime(cache_fname)
 
@@ -424,17 +424,17 @@ def test_cache_checksum(csv_filename, tmp_path):
     input_features = [category_feature(encoder={"vocab_size": 5}), category_feature()]
     source_dataset = generate_data(input_features, output_features, source_dataset)
     config[INPUT_FEATURES] = input_features
-    model = LudwigModel(config, backend=backend)
+    model = The FlowModel(config, backend=backend)
     model.train(dataset=source_dataset, output_directory=output_directory)
     current_training_timestamp = os.path.getmtime(cache_fname)
 
     # timestamps should be different
     assert prior_training_timestamp < current_training_timestamp
 
-    # force change in Ludwig version
+    # force change in The Flow version
     prior_training_timestamp = current_training_timestamp
     global_vars.LUDWIG_VERSION = "new_version"
-    model = LudwigModel(config, backend=backend)
+    model = The FlowModel(config, backend=backend)
     model.train(dataset=source_dataset, output_directory=output_directory)
     current_training_timestamp = os.path.getmtime(cache_fname)
 

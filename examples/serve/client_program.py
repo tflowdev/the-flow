@@ -3,9 +3,9 @@ import sys
 import pandas as pd
 import requests
 
-from ludwig.datasets import titanic
+from theflow.datasets import titanic
 
-# Ludwig model server default values
+# The Flow model server default values
 LUDWIG_HOST = "0.0.0.0"
 LUDWIG_PORT = "8000"
 

@@ -1,9 +1,9 @@
 from pathlib import Path
 
-import ludwig.datasets
-from ludwig.datasets.loaders.dataset_loader import DatasetLoader
+import theflow.datasets
+from theflow.datasets.loaders.dataset_loader import DatasetLoader
 
-# Subset of Ludwig Dataset Zoo used for AutoML type inference regression tests.
+# Subset of The Flow Dataset Zoo used for AutoML type inference regression tests.
 TEST_DATASET_REGISTRY = {"adult_census_income", "mnist"}
 
 
@@ -13,5 +13,5 @@ def get_dataset_golden_types_path(dataset_name: str) -> str:
 
 
 def get_dataset_object(dataset_name: str) -> DatasetLoader:
-    """Returns a Ludwig dataset instance for the given dataset."""
-    return ludwig.datasets.get_dataset(dataset_name)
+    """Returns a The Flow dataset instance for the given dataset."""
+    return theflow.datasets.get_dataset(dataset_name)

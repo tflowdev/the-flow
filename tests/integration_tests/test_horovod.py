@@ -29,7 +29,7 @@ except ImportError:
 else:
     HOROVOD_AVAILABLE = True
 
-from ludwig.constants import ENCODER, TYPE
+from theflow.constants import ENCODER, TYPE
 from tests.integration_tests.utils import category_feature, ENCODERS, generate_data, sequence_feature
 
 # This script will run the actual test model training in parallel
@@ -48,7 +48,7 @@ def _nccl_available():
         return False
 
 
-def _run_horovod(csv_filename, **ludwig_kwargs):
+def _run_horovod(csv_filename, **theflow_kwargs):
     """Execute the training script across multiple workers in parallel."""
     input_features, output_features, rel_path = _prepare_data(csv_filename)
     cmdline = [
@@ -63,8 +63,8 @@ def _run_horovod(csv_filename, **ludwig_kwargs):
         shlex.quote(json.dumps(input_features)),
         "--output-features",
         shlex.quote(json.dumps(output_features)),
-        "--ludwig-kwargs",
-        shlex.quote(json.dumps(ludwig_kwargs)),
+        "--theflow-kwargs",
+        shlex.quote(json.dumps(theflow_kwargs)),
     ]
     exit_code = subprocess.call(" ".join(cmdline), shell=True, env=os.environ.copy())
     assert exit_code == 0
@@ -87,8 +87,8 @@ def _prepare_data(csv_filename):
 @pytest.mark.horovod
 def test_horovod_implicit(csv_filename):
     """Test Horovod running without `backend='horovod'`."""
-    ludwig_kwargs = dict(gpus=-1)  # disable gpus for this test
-    _run_horovod(csv_filename, **ludwig_kwargs)
+    theflow_kwargs = dict(gpus=-1)  # disable gpus for this test
+    _run_horovod(csv_filename, **theflow_kwargs)
 
 
 @pytest.mark.skipif(platform.system() == "Windows", reason="Horovod is not supported on Windows")
@@ -98,5 +98,5 @@ def test_horovod_implicit(csv_filename):
 @pytest.mark.horovod
 def test_horovod_gpu_memory_limit(csv_filename):
     """Test Horovod with explicit GPU memory limit set."""
-    ludwig_kwargs = dict(gpu_memory_limit="0.5")
-    _run_horovod(csv_filename, **ludwig_kwargs)
+    theflow_kwargs = dict(gpu_memory_limit="0.5")
+    _run_horovod(csv_filename, **theflow_kwargs)

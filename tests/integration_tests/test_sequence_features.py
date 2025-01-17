@@ -6,11 +6,11 @@ import pandas as pd
 import pytest
 import torch
 
-from ludwig.api import LudwigModel
-from ludwig.constants import DECODER, ENCODER_OUTPUT_STATE, LOGITS
-from ludwig.data.dataset_synthesizer import build_synthetic_dataset
-from ludwig.data.preprocessing import preprocess_for_training
-from ludwig.features.feature_registries import update_config_with_metadata
+from theflow.api import The FlowModel
+from theflow.constants import DECODER, ENCODER_OUTPUT_STATE, LOGITS
+from theflow.data.dataset_synthesizer import build_synthetic_dataset
+from theflow.data.preprocessing import preprocess_for_training
+from theflow.features.feature_registries import update_config_with_metadata
 from tests.integration_tests.utils import generate_data, run_experiment, sequence_feature
 
 #
@@ -60,7 +60,7 @@ def generate_sequence_training_data():
 
 
 # setups up minimal number of data structures required to support initialized
-# input and output features.  The function returns initialized LudwigModel
+# input and output features.  The function returns initialized The FlowModel
 # and batcher for training dataset
 @contextlib.contextmanager
 def setup_model_scaffolding(raw_df, input_features, output_features):
@@ -68,7 +68,7 @@ def setup_model_scaffolding(raw_df, input_features, output_features):
     config = {"input_features": input_features, "output_features": output_features}
 
     # setup model scaffolding to for testing
-    model = LudwigModel(config)
+    model = The FlowModel(config)
     training_set, _, _, training_set_metadata = preprocess_for_training(
         model.config, training_set=raw_df, skip_save_processed_input=True
     )

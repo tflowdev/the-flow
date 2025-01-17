@@ -4,14 +4,14 @@ from typing import List
 import pytest
 from expected_metric import ExpectedMetric
 
-from ludwig.benchmarking.benchmark import benchmark
-from ludwig.utils.data_utils import load_yaml
+from theflow.benchmarking.benchmark import benchmark
+from theflow.utils.data_utils import load_yaml
 from tests.integration_tests.utils import parse_flag_from_env
 
 SKIPPED_CONFIG_ISSUES = {
-    "mercedes_benz_greener.ecd.yaml": "https://github.com/ludwig-ai/ludwig/issues/2978",
+    "mercedes_benz_greener.ecd.yaml": "https://github.com/theflow-ai/theflow/issues/2978",
     "sarcos.ecd.yaml": "Takes more than 300s",
-    "ames_housing.ecd.yaml": "https://github.com/ludwig-ai/ludwig/issues/3344",
+    "ames_housing.ecd.yaml": "https://github.com/theflow-ai/theflow/issues/3344",
 }
 CONFIGS_REQUIRING_DATASET_CREDENTIALS = {
     "mercedes_benz_greener.gbm.yaml",

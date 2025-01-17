@@ -34,9 +34,9 @@ import torch
 from PIL import Image
 from transformers import file_utils
 
-from ludwig.api import LudwigModel
-from ludwig.backend import LocalBackend
-from ludwig.constants import (
+from theflow.api import The FlowModel
+from theflow.backend import LocalBackend
+from theflow.constants import (
     AUDIO,
     BAG,
     BATCH_SIZE,
@@ -61,19 +61,19 @@ from ludwig.constants import (
     TRAINER,
     VECTOR,
 )
-from ludwig.data.dataset_synthesizer import build_synthetic_dataset, DATETIME_FORMATS
-from ludwig.experiment import experiment_cli
-from ludwig.features.feature_utils import compute_feature_hash
-from ludwig.globals import MODEL_FILE_NAME, PREDICTIONS_PARQUET_FILE_NAME
-from ludwig.schema.encoders.text_encoders import HFEncoderConfig
-from ludwig.schema.encoders.utils import get_encoder_classes
-from ludwig.trainers.trainer import Trainer
-from ludwig.utils import fs_utils
-from ludwig.utils.data_utils import read_csv, replace_file_extension, use_credentials
+from theflow.data.dataset_synthesizer import build_synthetic_dataset, DATETIME_FORMATS
+from theflow.experiment import experiment_cli
+from theflow.features.feature_utils import compute_feature_hash
+from theflow.globals import MODEL_FILE_NAME, PREDICTIONS_PARQUET_FILE_NAME
+from theflow.schema.encoders.text_encoders import HFEncoderConfig
+from theflow.schema.encoders.utils import get_encoder_classes
+from theflow.trainers.trainer import Trainer
+from theflow.utils import fs_utils
+from theflow.utils.data_utils import read_csv, replace_file_extension, use_credentials
 
 if TYPE_CHECKING:
-    from ludwig.data.dataset.base import Dataset
-    from ludwig.schema.model_types.base import ModelConfig
+    from theflow.data.dataset.base import Dataset
+    from theflow.schema.model_types.base import ModelConfig
 
 logger = logging.getLogger(__name__)
 
@@ -534,7 +534,7 @@ def run_experiment(
 
     :param input_features: list of input feature dictionaries
     :param output_features: list of output feature dictionaries
-    :param config: A dictionary containing the Ludwig model configuration
+    :param config: A dictionary containing the The Flow model configuration
     :param skip_save_processed_input: (bool, default: `False`) if input
     dataset is provided it is preprocessed and cached by saving an HDF5
     and JSON files to avoid running the preprocessing again. If this
@@ -596,7 +596,7 @@ def generate_output_features_with_dependencies(main_feature, dependencies):
 
     # value portion of dictionary is a tuple: (position, feature_name)
     #   position: location of output feature in the above output_features list
-    #   feature_name: Ludwig generated feature name
+    #   feature_name: The Flow generated feature name
     feature_names = {
         "category_feature": (0, output_features[0]["name"]),
         "sequence_feature": (1, output_features[1]["name"]),
@@ -716,7 +716,7 @@ def run_api_experiment(input_features, output_features, data_csv):
         TRAINER: {"epochs": 2, BATCH_SIZE: 128},
     }
 
-    model = LudwigModel(config)
+    model = The FlowModel(config)
     output_dir = None
 
     try:
@@ -727,7 +727,7 @@ def run_api_experiment(input_features, output_features, data_csv):
         model.predict(dataset=data_csv)
 
         model_dir = os.path.join(output_dir, MODEL_FILE_NAME)
-        loaded_model = LudwigModel.load(model_dir)
+        loaded_model = The FlowModel.load(model_dir)
 
         # Necessary before call to get_weights() to materialize the weights
         loaded_model.predict(dataset=data_csv)
@@ -908,7 +908,7 @@ def train_with_backend(
     skip_save_predictions=True,
     required_metrics=None,
 ):
-    model = LudwigModel(config, backend=backend, callbacks=callbacks)
+    model = The FlowModel(config, backend=backend, callbacks=callbacks)
     with tempfile.TemporaryDirectory() as output_directory:
         _, _, _ = model.train(
             dataset=dataset,
@@ -949,13 +949,13 @@ def train_with_backend(
             # Test that eval_stats are approx equal when using local backend
             with tempfile.TemporaryDirectory() as tmpdir:
                 model.save(tmpdir)
-                local_model = LudwigModel.load(tmpdir, backend=LocalTestBackend())
+                local_model = The FlowModel.load(tmpdir, backend=LocalTestBackend())
                 local_eval_stats, _, _ = local_model.evaluate(
                     dataset=dataset, collect_overall_stats=False, collect_predictions=False
                 )
 
                 # Filter out metrics that are not being aggregated correctly for now
-                # TODO(travis): https://github.com/ludwig-ai/ludwig/issues/1956
+                # TODO(travis): https://github.com/theflow-ai/theflow/issues/1956
                 # Filter out next_token_perplexity since it is only relevant for LLMs
                 def filter(stats):
                     return {
@@ -1004,7 +1004,7 @@ def train_with_backend(
 def assert_all_required_metrics_exist(
     feature_to_metrics_dict: Dict[str, Dict[str, Any]], required_metrics: Optional[Dict[str, Set]] = None
 ):
-    """Checks that all `required_metrics` exist in the dictionary returned during Ludwig model evaluation.
+    """Checks that all `required_metrics` exist in the dictionary returned during The Flow model evaluation.
 
     `feature_to_metrics_dict` is a dict where the feature name is a key and the value is a dictionary of metrics:
 
@@ -1156,10 +1156,10 @@ def clear_huggingface_cache():
 
 def run_test_suite(config, dataset, backend):
     with tempfile.TemporaryDirectory() as tmpdir:
-        model = LudwigModel(config, backend=backend)
+        model = The FlowModel(config, backend=backend)
         _, _, output_dir = model.train(dataset=dataset, output_directory=tmpdir)
 
         model_dir = os.path.join(output_dir, MODEL_FILE_NAME)
-        loaded_model = LudwigModel.load(model_dir, backend=backend)
+        loaded_model = The FlowModel.load(model_dir, backend=backend)
         loaded_model.predict(dataset=dataset)
         return loaded_model

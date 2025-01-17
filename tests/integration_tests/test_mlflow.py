@@ -9,23 +9,23 @@ import pytest
 import yaml
 from mlflow.tracking import MlflowClient
 
-from ludwig.api import LudwigModel
-from ludwig.constants import TRAINER
-from ludwig.contribs.mlflow import MlflowCallback
-from ludwig.export import export_mlflow
-from ludwig.globals import MODEL_FILE_NAME
-from ludwig.utils.backward_compatibility import upgrade_config_dict_to_latest_version
+from theflow.api import The FlowModel
+from theflow.constants import TRAINER
+from theflow.contribs.mlflow import MlflowCallback
+from theflow.export import export_mlflow
+from theflow.globals import MODEL_FILE_NAME
+from theflow.utils.backward_compatibility import upgrade_config_dict_to_latest_version
 from tests.integration_tests.utils import category_feature, FakeRemoteBackend, generate_data, sequence_feature
 
 
 def run_mlflow_callback_test(mlflow_client, config, training_data, val_data, test_data, tmpdir, exp_name=None):
-    ludwig_exp_name = "mlflow_test"
+    theflow_exp_name = "mlflow_test"
     callback = MlflowCallback()
     wrapped_callback = mock.Mock(wraps=callback)
 
-    model = LudwigModel(config, callbacks=[wrapped_callback], backend=FakeRemoteBackend())
+    model = The FlowModel(config, callbacks=[wrapped_callback], backend=FakeRemoteBackend())
     model.train(
-        training_set=training_data, validation_set=val_data, test_set=test_data, experiment_name=ludwig_exp_name
+        training_set=training_data, validation_set=val_data, test_set=test_data, experiment_name=theflow_exp_name
     )
     expected_df, _ = model.predict(test_data)
 
@@ -33,7 +33,7 @@ def run_mlflow_callback_test(mlflow_client, config, training_data, val_data, tes
     assert callback.experiment_id is not None
     assert callback.run is not None
 
-    mlflow_exp_name = exp_name or ludwig_exp_name
+    mlflow_exp_name = exp_name or theflow_exp_name
     experiment = mlflow.get_experiment_by_name(mlflow_exp_name)
     assert experiment.experiment_id == callback.experiment_id
 
@@ -63,13 +63,13 @@ def run_mlflow_callback_test(mlflow_client, config, training_data, val_data, tes
     model_path = f"runs:/{callback.run.info.run_id}/model"
     loaded_model = mlflow.pyfunc.load_model(model_path)
 
-    assert "ludwig" in loaded_model.metadata.flavors
-    flavor = loaded_model.metadata.flavors["ludwig"]
+    assert "theflow" in loaded_model.metadata.flavors
+    flavor = loaded_model.metadata.flavors["theflow"]
     config = model.config
 
     def compare_features(key):
-        assert len(config[key]) == len(flavor["ludwig_schema"][key])
-        for feature, schema_feature in zip(config[key], flavor["ludwig_schema"][key]):
+        assert len(config[key]) == len(flavor["theflow_schema"][key])
+        for feature, schema_feature in zip(config[key], flavor["theflow_schema"][key]):
             assert feature["name"] == schema_feature["name"]
             assert feature["type"] == schema_feature["type"]
 
@@ -87,7 +87,7 @@ def run_mlflow_callback_test_without_artifacts(mlflow_client, config, training_d
     callback = MlflowCallback(log_artifacts=False)
     wrapped_callback = mock.Mock(wraps=callback)
 
-    model = LudwigModel(config, callbacks=[wrapped_callback], backend=FakeRemoteBackend())
+    model = The FlowModel(config, callbacks=[wrapped_callback], backend=FakeRemoteBackend())
     model.train(training_set=training_data, validation_set=val_data, test_set=test_data, experiment_name=exp_name)
     expected_df, _ = model.predict(test_data)
 
@@ -165,7 +165,7 @@ def test_export_mlflow_local(tmpdir):
 
     exp_name = "mlflow_test"
     output_dir = os.path.join(tmpdir, "output")
-    model = LudwigModel(config, backend=FakeRemoteBackend())
+    model = The FlowModel(config, backend=FakeRemoteBackend())
     _, _, output_directory = model.train(training_set=data_csv, experiment_name=exp_name, output_directory=output_dir)
 
     model_path = os.path.join(output_directory, MODEL_FILE_NAME)
@@ -196,5 +196,5 @@ def test_mlflow_ray(tmpdir, ray_cluster_2cpu):
 
     exp_name = "mlflow_test"
     output_dir = os.path.join(tmpdir, "output")
-    model = LudwigModel(config, callbacks=[MlflowCallback()], backend="ray")
+    model = The FlowModel(config, callbacks=[MlflowCallback()], backend="ray")
     _, _, output_directory = model.train(training_set=data_csv, experiment_name=exp_name, output_directory=output_dir)

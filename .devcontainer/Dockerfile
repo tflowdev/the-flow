@@ -1,4 +1,4 @@
-FROM ludwigai/ludwig-ray:master
+FROM theflowai/theflow-ray:master
 
 USER root
 # Copy library scripts to execute

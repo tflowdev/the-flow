@@ -3,8 +3,8 @@ import os
 import numpy as np
 import pytest
 
-from ludwig.api import LudwigModel
-from ludwig.constants import MODEL_ECD, MODEL_GBM, PREPROCESSING, PROC_COLUMN, TRAINER
+from theflow.api import The FlowModel
+from theflow.constants import MODEL_ECD, MODEL_GBM, PREPROCESSING, PROC_COLUMN, TRAINER
 from tests.integration_tests.test_gbm import category_feature
 from tests.integration_tests.utils import binary_feature, generate_data, number_feature, run_test_suite, text_feature
 
@@ -85,11 +85,11 @@ def test_onehot_encoding_preprocessing(model_type, cache_encoder_embeddings, tmp
     }
 
     # Run preprocessing
-    ludwig_model = LudwigModel(config, backend="local")
-    proc_dataset = ludwig_model.preprocess(training_set=dataset_fp)
+    theflow_model = The FlowModel(config, backend="local")
+    proc_dataset = theflow_model.preprocess(training_set=dataset_fp)
 
     # Check preprocessed output
-    proc_df = ludwig_model.backend.df_engine.compute(proc_dataset.training_set.to_df())
+    proc_df = theflow_model.backend.df_engine.compute(proc_dataset.training_set.to_df())
     proc_col = input_features[0][PROC_COLUMN]
     proc_series = proc_df[proc_col]
 

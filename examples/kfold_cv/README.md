@@ -1,10 +1,10 @@
 # K-Ffold Cross Validation Example
 
-This directory contains two examples of performing a k-fold cross validation analysis with Ludwig.
+This directory contains two examples of performing a k-fold cross validation analysis with The Flow.
 
 ## Classification Example
 
-This example illustrates running the k-fold cv with the `ludwig experiment` cli.
+This example illustrates running the k-fold cv with the `theflow experiment` cli.
 
 To run this example execute this bash script:
 
@@ -14,8 +14,8 @@ To run this example execute this bash script:
 
 This bash script performs these steps:
 
-- Download and prepare data for training and create a Ludwig config file
-- Execute `ludwig experiment` to run the 5-fold cross validation
+- Download and prepare data for training and create a The Flow config file
+- Execute `theflow experiment` to run the 5-fold cross validation
 - Display results from the 5-fold cross validation analysis
 
 Sample output:
@@ -25,7 +25,7 @@ Cleaning out old results
 Downloading data set
 Preparing data for training
 Saving training and test data sets
-Preparing Ludwig config
+Preparing The Flow config
 Completed data preparation
 Training: 100%|████████████████████████████████████████████████████████████████████████████████| 12/12 [00:00<00:00, 23.14it/s]
 Evaluation train: 100%|████████████████████████████████████████████████████████████████████████| 12/12 [00:00<00:00, 98.62it/s]
@@ -64,10 +64,10 @@ retrieving results from  results
 
 ## Regression Example
 
-This illustrates using the Ludwig API to run the K-fold cross validation analysis.  To run the example, open the jupyter notebook `regression_example.ipynb`.  Following steps are performed:
+This illustrates using the The Flow API to run the K-fold cross validation analysis.  To run the example, open the jupyter notebook `regression_example.ipynb`.  Following steps are performed:
 
-- Download and prepare data for training and create a Ludwig config data structure from a pandas dataframe structure
-- Use `ludwig.api.kfold_cross_validate()` function  to run the 5-fold cross validation
+- Download and prepare data for training and create a The Flow config data structure from a pandas dataframe structure
+- Use `theflow.api.kfold_cross_validate()` function  to run the 5-fold cross validation
 - Display results from the 5-fold cross validation analysis
 
 Expected output from running the example:

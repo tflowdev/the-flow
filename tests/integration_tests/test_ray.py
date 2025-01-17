@@ -22,9 +22,9 @@ import pandas as pd
 import pytest
 import torch
 
-from ludwig.api import LudwigModel
-from ludwig.backend import create_ray_backend, initialize_backend, LOCAL_BACKEND
-from ludwig.constants import (
+from theflow.api import The FlowModel
+from theflow.backend import create_ray_backend, initialize_backend, LOCAL_BACKEND
+from theflow.constants import (
     AUDIO,
     BAG,
     BALANCE_PERCENTAGE_TOLERANCE,
@@ -48,11 +48,11 @@ from ludwig.constants import (
     TRAINER,
     VECTOR,
 )
-from ludwig.data.preprocessing import balance_data
-from ludwig.data.split import DEFAULT_PROBABILITIES
-from ludwig.globals import MODEL_FILE_NAME
-from ludwig.utils.data_utils import read_parquet
-from ludwig.utils.misc_utils import merge_dict
+from theflow.data.preprocessing import balance_data
+from theflow.data.split import DEFAULT_PROBABILITIES
+from theflow.globals import MODEL_FILE_NAME
+from theflow.utils.data_utils import read_parquet
+from theflow.utils.misc_utils import merge_dict
 from tests.integration_tests.utils import (
     audio_feature,
     augment_dataset_with_none,
@@ -86,8 +86,8 @@ from ray.air.config import DatasetConfig  # noqa: E402
 from ray.data import Dataset, DatasetPipeline  # noqa: E402
 from ray.train._internal.dataset_spec import DataParallelIngestSpec  # noqa: E402
 
-from ludwig.backend.ray import get_trainer_kwargs, RayBackend  # noqa: E402
-from ludwig.data.dataframe.dask import DaskEngine  # noqa: E402
+from theflow.backend.ray import get_trainer_kwargs, RayBackend  # noqa: E402
+from theflow.data.dataframe.dask import DaskEngine  # noqa: E402
 
 try:
     import modin  # noqa: E402
@@ -97,14 +97,14 @@ except ImportError:
 
 @ray.remote(num_cpus=1, num_gpus=1)
 def train_gpu(config, dataset, output_directory):
-    model = LudwigModel(config, backend="local")
+    model = The FlowModel(config, backend="local")
     _, _, output_dir = model.train(dataset, output_directory=output_directory)
     return os.path.join(output_dir, MODEL_FILE_NAME)
 
 
 @ray.remote(num_cpus=1, num_gpus=0)
 def predict_cpu(model_dir, dataset):
-    model = LudwigModel.load(model_dir, backend="local")
+    model = The FlowModel.load(model_dir, backend="local")
     model.predict(dataset)
 
 
@@ -217,7 +217,7 @@ def run_preprocessing(
         backend_config["processor"]["type"] = df_engine
 
     # Run preprocessing with ray backend
-    ray_model = LudwigModel(config, backend=backend_config)
+    ray_model = The FlowModel(config, backend=backend_config)
     *ray_datasets, ray_training_set_metadata = ray_model.preprocess(
         skip_save_processed_input=False,  # Save the processed input to test pyarrow write/read
         dataset=dataset,
@@ -225,7 +225,7 @@ def run_preprocessing(
 
     # Run preprocessing with local backend using the ray_training_set_metadata to ensure parity of
     # token assignments, etc.
-    local_model = LudwigModel(config, backend=LOCAL_BACKEND)
+    local_model = The FlowModel(config, backend=LOCAL_BACKEND)
     *local_datasets, _ = local_model.preprocess(
         training_set_metadata=ray_training_set_metadata,
         dataset=dataset,
@@ -255,7 +255,7 @@ def check_preprocessed_df_equal(df1, df2):
                 # With the distributed backend, the data is flattened and then later reshaped to its original shape
                 # during training. With the local backend, the data is kept its original shape throughout.
                 # TODO: Determine whether this is desired behavior. Tracked here:
-                # https://github.com/ludwig-ai/ludwig/issues/2645
+                # https://github.com/theflow-ai/theflow/issues/2645
                 v1 = v1.reshape(-1)
                 v2 = v2.reshape(-1)
                 is_equal &= np.allclose(v1, v2, atol=1e-5)
@@ -433,7 +433,7 @@ def test_ray_outputs(dataset_type, trainer_strategy, ray_cluster_2cpu):
     )
 
 
-@pytest.mark.skip(reason="Occasional metadata mismatch error: https://github.com/ludwig-ai/ludwig/issues/2889")
+@pytest.mark.skip(reason="Occasional metadata mismatch error: https://github.com/theflow-ai/theflow/issues/2889")
 @pytest.mark.parametrize("dataset_type", ["csv", "parquet"])
 @pytest.mark.distributed
 def test_ray_set_and_vector_outputs(dataset_type, ray_cluster_2cpu):
@@ -474,7 +474,7 @@ def test_ray_set_and_vector_outputs(dataset_type, ray_cluster_2cpu):
             "modin",
             marks=[
                 pytest.mark.skipif(modin is None, reason="modin not installed"),
-                pytest.mark.skip(reason="https://github.com/ludwig-ai/ludwig/issues/2643"),
+                pytest.mark.skip(reason="https://github.com/theflow-ai/theflow/issues/2643"),
             ],
         ),
     ],
@@ -666,7 +666,7 @@ def test_ray_image_with_fill_strategy_edge_cases(tmpdir, settings, ray_cluster_2
 
 @pytest.mark.distributed
 @pytest.mark.skipif(modin is None, reason="modin not installed")
-@pytest.mark.skip(reason="https://github.com/ludwig-ai/ludwig/issues/2643")
+@pytest.mark.skip(reason="https://github.com/theflow-ai/theflow/issues/2643")
 def test_ray_image_modin(tmpdir, ray_cluster_2cpu):
     image_dest_folder = os.path.join(tmpdir, "generated_images")
     input_features = [
@@ -934,7 +934,7 @@ def test_ray_distributed_predict(ray_cluster_2cpu):
         csv_filename = os.path.join(tmpdir, "dataset.csv")
         dataset_csv = generate_data(input_features, output_features, csv_filename, num_examples=100)
         dataset = create_data_set_to_use("csv", dataset_csv, nan_percent=0.0)
-        model = LudwigModel(config, backend=backend_config)
+        model = The FlowModel(config, backend=backend_config)
 
         _, _, _ = model.train(
             dataset=dataset,
@@ -985,7 +985,7 @@ def test_ray_preprocessing_placement_group(ray_cluster_2cpu):
         csv_filename = os.path.join(tmpdir, "dataset.csv")
         dataset_csv = generate_data(input_features, output_features, csv_filename, num_examples=100)
         dataset = create_data_set_to_use("csv", dataset_csv, nan_percent=0.0)
-        model = LudwigModel(config, backend=backend_config)
+        model = The FlowModel(config, backend=backend_config)
         _, _, output_dir = model.train(
             dataset=dataset,
             training_set=dataset,
@@ -1032,7 +1032,7 @@ class TestDatasetWindowAutosizing:
             window_size_bytes: Pass to override the auto_window size
 
         Returns:
-            A Ludwig RayDataset of the specified size.
+            A The Flow RayDataset of the specified size.
         """
         # Create a dataset of the specified size with 100 partitions.
         # This translates to 100 blocks within the `ray.data.Dataset`.
@@ -1053,7 +1053,7 @@ class TestDatasetWindowAutosizing:
         backend_config = copy.deepcopy(RAY_BACKEND_CONFIG)
         backend_config["loader"] = {"window_size_bytes": window_size_bytes}
         backend_config["preprocessor_kwargs"] = {"num_cpu": 1}
-        model = LudwigModel(config, backend=backend_config)
+        model = The FlowModel(config, backend=backend_config)
 
         # Create a dataset using the model backend to ensure it
         # is initialized correctly.

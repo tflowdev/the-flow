@@ -1,10 +1,10 @@
 import pytest
 import torch
 
-from ludwig.constants import ENCODER_OUTPUT
-from ludwig.features.audio_feature import AudioInputFeature
-from ludwig.schema.features.audio_feature import AudioInputFeatureConfig
-from ludwig.schema.utils import load_config_with_kwargs
+from theflow.constants import ENCODER_OUTPUT
+from theflow.features.audio_feature import AudioInputFeature
+from theflow.schema.features.audio_feature import AudioInputFeatureConfig
+from theflow.schema.utils import load_config_with_kwargs
 from tests.integration_tests.utils import audio_feature
 
 BATCH_SIZE = 2

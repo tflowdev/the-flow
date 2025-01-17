@@ -6,14 +6,14 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from ludwig.api import LudwigModel
-from ludwig.backend import LocalBackend
+from theflow.api import The FlowModel
+from theflow.backend import LocalBackend
 from tests.integration_tests.utils import create_data_set_to_use, RAY_BACKEND_CONFIG, spawn
 
 try:
     import ray
 
-    from ludwig.backend.ray import RayBackend
+    from theflow.backend.ray import RayBackend
 except ImportError:
     ray = None
 
@@ -50,7 +50,7 @@ def run_test_imbalance_ray(
         input_df.to_csv(csv_filename)
         dataset_parquet = create_data_set_to_use("parquet", csv_filename)
 
-        model = LudwigModel(config, backend=RAY_BACKEND_CONFIG, callbacks=None)
+        model = The FlowModel(config, backend=RAY_BACKEND_CONFIG, callbacks=None)
         output_dir = None
 
         try:
@@ -90,7 +90,7 @@ def run_test_imbalance_local(
     config,
     balance,
 ):
-    model = LudwigModel(config)
+    model = The FlowModel(config)
     _, output_dataset, output_dir = model.train(
         input_df,
         skip_save_model=True,

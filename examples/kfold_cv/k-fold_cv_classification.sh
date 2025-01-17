@@ -8,7 +8,7 @@ python prepare_classification_data_set.py
 #
 # Run 5-fold cross validation
 #
-ludwig experiment \
+theflow experiment \
   --config config.yaml \
   --dataset data/train.csv \
   --output_directory results \

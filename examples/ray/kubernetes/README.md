@@ -15,7 +15,7 @@ We recommend using the [Kuberay](https://github.com/ray-project/kuberay) impleme
 First choose your preferred cluster template from `clusters`, for example:
 
 ```
-export CLUSTER_NAME=ludwig-ray-cpu-cluster
+export CLUSTER_NAME=theflow-ray-cpu-cluster
 ```
 
 ### Start the cluster
@@ -44,10 +44,10 @@ export CLUSTER_NAME=ludwig-ray-cpu-cluster
 
 Navigate to http://localhost:8267
 
-### (For Ludwig Developers) Sync local Ludwig repo
+### (For The Flow Developers) Sync local The Flow repo
 
 ```
-./utils/rsync_up.sh $CLUSTER_NAME ~/repos/ludwig
+./utils/rsync_up.sh $CLUSTER_NAME ~/repos/theflow
 ```
 
 ### Shutdown the cluster
@@ -58,7 +58,7 @@ Navigate to http://localhost:8267
 
 ### Connecting to remote filesystems (S3, GCS, etc.)
 
-Build a custom Docker image deriving from `ludwig-ray` or `ludwig-ray-gpu` containing the library needed for your
+Build a custom Docker image deriving from `theflow-ray` or `theflow-ray-gpu` containing the library needed for your
 data:
 
 - `s3fs`

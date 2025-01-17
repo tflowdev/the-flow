@@ -7,7 +7,7 @@ from unittest.mock import Mock
 # Comet must be imported before the libraries it wraps
 import aim  # noqa
 
-from ludwig.contribs.aim import AimCallback
+from theflow.contribs.aim import AimCallback
 from tests.integration_tests.utils import category_feature, generate_data, image_feature, run_experiment
 
 PATH_HERE = os.path.abspath(os.path.dirname(__file__))

@@ -7,8 +7,8 @@ import numpy as np
 import pytest
 import torch
 
-from ludwig.api import LudwigModel
-from ludwig.data.dataset_synthesizer import cli_synthesize_dataset
+from theflow.api import The FlowModel
+from theflow.data.dataset_synthesizer import cli_synthesize_dataset
 
 INPUT_FEATURES = [
     {"name": "num_1", "type": "number"},
@@ -49,14 +49,14 @@ def test_preprocess(raw_dataset_fp: str, random_seed: int, second_seed_offset: i
 
     Returns: None
     """
-    # define Ludwig model
-    model1 = LudwigModel(config=CONFIG)
+    # define The Flow model
+    model1 = The FlowModel(config=CONFIG)
 
     # preprocess the raw data set, specify seed
     preprocessed_data1 = model1.preprocess(raw_dataset_fp, random_seed=random_seed)
 
     # perform second preprocess operation
-    model2 = LudwigModel(config=CONFIG)
+    model2 = The FlowModel(config=CONFIG)
     # preprocess same raw data set with same seed
     preprocessed_data2 = model2.preprocess(raw_dataset_fp, random_seed=random_seed + second_seed_offset)
 
@@ -74,7 +74,7 @@ def test_preprocess(raw_dataset_fp: str, random_seed: int, second_seed_offset: i
 @pytest.mark.parametrize("random_seed", [1919, 31])
 def test_preprocess_ignore_torch_seed(raw_dataset_fp: str, random_seed: int) -> None:
     """Test reproducibility of train/validation/test splits when an unrelated torch random operation is performed
-    between the Ludwig operations.
+    between the The Flow operations.
 
     Args:
         raw_dataset_fp (str): file path for data to be used as part of this test
@@ -82,19 +82,19 @@ def test_preprocess_ignore_torch_seed(raw_dataset_fp: str, random_seed: int) -> 
 
     Returns: None
     """
-    # define Ludwig model
-    model1 = LudwigModel(config=CONFIG)
+    # define The Flow model
+    model1 = The FlowModel(config=CONFIG)
 
     # preprocess the raw data set, specify seed
     preprocessed_data1 = model1.preprocess(raw_dataset_fp, random_seed=random_seed)
 
     # invoke torch random functions with unrelated seed to
-    # see if it affects Ludwig reproducibility
+    # see if it affects The Flow reproducibility
     torch.manual_seed(random_seed + 5)
     torch.rand((5,))
 
-    # define Ludwig model
-    model2 = LudwigModel(config=CONFIG)
+    # define The Flow model
+    model2 = The FlowModel(config=CONFIG)
     # preprocess same raw data set with same seed
     preprocessed_data2 = model2.preprocess(raw_dataset_fp, random_seed=random_seed)
 
@@ -119,13 +119,13 @@ def test_train(raw_dataset_fp: str, random_seed: int, second_seed_offset: int) -
     Returns: None
     """
     # perform first model training run
-    model1 = LudwigModel(config=CONFIG, logging_level=logging.WARN)
+    model1 = The FlowModel(config=CONFIG, logging_level=logging.WARN)
     training_statistics1, preprocessed_data1, _ = model1.train(
         dataset=raw_dataset_fp, random_seed=random_seed, skip_save_progress=True, skip_save_processed_input=True
     )
 
     # perform second model training run
-    model2 = LudwigModel(config=CONFIG, logging_level=logging.WARN)
+    model2 = The FlowModel(config=CONFIG, logging_level=logging.WARN)
     training_statistics2, preprocessed_data2, _ = model2.train(
         dataset=raw_dataset_fp,
         random_seed=random_seed + second_seed_offset,
@@ -155,7 +155,7 @@ def test_train(raw_dataset_fp: str, random_seed: int, second_seed_offset: int) -
 @pytest.mark.parametrize("random_seed", [1919, 31])
 def test_train_ignore_torch_seed(raw_dataset_fp: str, random_seed: int) -> None:
     """Test reproducibility of training API when an unrelated torch random operation is performed between the
-    Ludwig operations.
+    The Flow operations.
 
     Args:
         raw_dataset_fp (str): file path for data to be used as part of this test
@@ -163,18 +163,18 @@ def test_train_ignore_torch_seed(raw_dataset_fp: str, random_seed: int) -> None:
 
     Returns: None
     """
-    # define Ludwig model
-    model1 = LudwigModel(config=CONFIG, logging_level=logging.WARN)
+    # define The Flow model
+    model1 = The FlowModel(config=CONFIG, logging_level=logging.WARN)
     training_statistics1, preprocessed_data1, _ = model1.train(
         dataset=raw_dataset_fp, random_seed=random_seed, skip_save_progress=True, skip_save_processed_input=True
     )
 
     # invoke torch random functions with unrelated seed to
-    # see if it affects Ludwig reproducibility
+    # see if it affects The Flow reproducibility
     torch.manual_seed(random_seed + 5)
     torch.rand((5,))
 
-    model2 = LudwigModel(config=CONFIG, logging_level=logging.WARN)
+    model2 = The FlowModel(config=CONFIG, logging_level=logging.WARN)
     training_statistics2, preprocessed_data2, _ = model2.train(
         dataset=raw_dataset_fp,
         random_seed=random_seed,
@@ -206,13 +206,13 @@ def test_experiment(raw_dataset_fp: str, random_seed: int, second_seed_offset: i
     Returns: None
     """
     # perform first model experiment
-    model1 = LudwigModel(config=CONFIG, logging_level=logging.WARN)
+    model1 = The FlowModel(config=CONFIG, logging_level=logging.WARN)
     evaluation_statistics1, training_statistics1, preprocessed_data1, _ = model1.experiment(
         dataset=raw_dataset_fp, random_seed=random_seed, skip_save_processed_input=True
     )
 
     # perform second model experiment
-    model2 = LudwigModel(config=CONFIG, logging_level=logging.WARN)
+    model2 = The FlowModel(config=CONFIG, logging_level=logging.WARN)
     evaluation_statistics2, training_statistics2, preprocessed_data2, _ = model2.experiment(
         dataset=raw_dataset_fp, random_seed=random_seed + second_seed_offset, skip_save_processed_input=True
     )
@@ -241,7 +241,7 @@ def test_experiment(raw_dataset_fp: str, random_seed: int, second_seed_offset: i
 @pytest.mark.parametrize("random_seed", [1919, 31])
 def test_experiment_ignore_torch_seed(raw_dataset_fp: str, random_seed: int) -> None:
     """Test reproducibility of experiment API when an unrelated torch random operation is performed between the
-    Ludwig operations.
+    The Flow operations.
 
     Args:
         raw_dataset_fp (str): file path for data to be used as part of this test
@@ -249,19 +249,19 @@ def test_experiment_ignore_torch_seed(raw_dataset_fp: str, random_seed: int) -> 
 
     Returns: None
     """
-    # define Ludwig model
-    model1 = LudwigModel(config=CONFIG, logging_level=logging.WARN)
+    # define The Flow model
+    model1 = The FlowModel(config=CONFIG, logging_level=logging.WARN)
 
     evaluation_statistics1, training_statistics1, preprocessed_data1, _ = model1.experiment(
         dataset=raw_dataset_fp, random_seed=random_seed, skip_save_processed_input=True
     )
 
     # invoke torch random functions with unrelated seed to
-    # see if it affects Ludwig reproducibility
+    # see if it affects The Flow reproducibility
     torch.manual_seed(random_seed + 5)
     torch.rand((5,))
 
-    model2 = LudwigModel(config=CONFIG, logging_level=logging.WARN)
+    model2 = The FlowModel(config=CONFIG, logging_level=logging.WARN)
     evaluation_statistics2, training_statistics2, preprocessed_data2, _ = model2.experiment(
         dataset=raw_dataset_fp, random_seed=random_seed, skip_save_processed_input=True
     )

@@ -6,7 +6,7 @@ import os.path
 import pprint
 import sys
 
-from ludwig.utils.data_utils import load_json
+from theflow.utils.data_utils import load_json
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

@@ -22,12 +22,12 @@ import pytest
 import torch
 import yaml
 
-from ludwig.api import LudwigModel
-from ludwig.callbacks import Callback
-from ludwig.constants import BATCH_SIZE, ENCODER, TRAINER, TYPE
-from ludwig.globals import MODEL_FILE_NAME, MODEL_HYPERPARAMETERS_FILE_NAME
-from ludwig.models.inference import InferenceModule
-from ludwig.utils.data_utils import read_csv
+from theflow.api import The FlowModel
+from theflow.callbacks import Callback
+from theflow.constants import BATCH_SIZE, ENCODER, TRAINER, TYPE
+from theflow.globals import MODEL_FILE_NAME, MODEL_HYPERPARAMETERS_FILE_NAME
+from theflow.models.inference import InferenceModule
+from theflow.utils.data_utils import read_csv
 from tests.integration_tests.utils import (
     category_feature,
     ENCODERS,
@@ -55,7 +55,7 @@ def run_api_experiment_separated_datasets(input_features, output_features, data_
         TRAINER: {"epochs": 2, BATCH_SIZE: 128},
     }
 
-    model = LudwigModel(config)
+    model = The FlowModel(config)
 
     # Training with dataframe
     data_df = read_csv(data_csv)
@@ -184,7 +184,7 @@ def test_api_train_online(csv_filename):
         "output_features": output_features,
         "combiner": {"type": "concat", "output_size": 14},
     }
-    model = LudwigModel(config)
+    model = The FlowModel(config)
 
     for _ in range(2):
         model.train_online(dataset=data_csv)
@@ -204,7 +204,7 @@ def test_api_training_set(tmpdir):
         "output_features": output_features,
         "combiner": {"type": "concat", "output_size": 14},
     }
-    model = LudwigModel(config)
+    model = The FlowModel(config)
     model.train(training_set=data_csv, validation_set=val_csv, test_set=test_csv)
     model.predict(dataset=test_csv)
 
@@ -236,13 +236,13 @@ def test_api_training_determinism(tmpdir):
     rand_x = 42
     rand_y = 24
 
-    model_1 = LudwigModel(config)
+    model_1 = The FlowModel(config)
     model_1.train(dataset=data_csv, output_directory=tmpdir, random_seed=rand_x)
 
-    model_2 = LudwigModel(config)
+    model_2 = The FlowModel(config)
     model_2.train(dataset=data_csv, output_directory=tmpdir, random_seed=rand_y)
 
-    model_3 = LudwigModel(config)
+    model_3 = The FlowModel(config)
     model_3.train(dataset=data_csv, output_directory=tmpdir, random_seed=rand_x)
 
     model_weights_1 = get_weights(model_1.model)
@@ -291,7 +291,7 @@ def run_api_commands(
         TRAINER: {"epochs": 2, BATCH_SIZE: 128},
     }
 
-    model = LudwigModel(config)
+    model = The FlowModel(config)
 
     # Training with csv
     model.train(
@@ -454,7 +454,7 @@ def test_api_callbacks(tmpdir, csv_filename, epochs, batch_size, num_examples, s
             "early_stop": 0,  # Disable early stopping.
         },
     }
-    model = LudwigModel(config, callbacks=[mock_callback])
+    model = The FlowModel(config, callbacks=[mock_callback])
 
     data_csv = generate_data(
         input_features, output_features, os.path.join(tmpdir, csv_filename), num_examples=num_examples
@@ -508,7 +508,7 @@ def test_api_callbacks_checkpoints_per_epoch(
             "early_stop": 0,  # Disable early stopping.
         },
     }
-    model = LudwigModel(config, callbacks=[mock_callback])
+    model = The FlowModel(config, callbacks=[mock_callback])
 
     data_csv = generate_data(
         input_features, output_features, os.path.join(tmpdir, csv_filename), num_examples=num_examples
@@ -553,7 +553,7 @@ def test_api_callbacks_default_train_steps(tmpdir, csv_filename):
         "combiner": {"type": "concat", "output_size": 14},
         TRAINER: {"epochs": epochs, "train_steps": train_steps, "batch_size": batch_size},
     }
-    model = LudwigModel(config, callbacks=[mock_callback])
+    model = The FlowModel(config, callbacks=[mock_callback])
     model.train(
         training_set=generate_data(
             input_features, output_features, os.path.join(tmpdir, csv_filename), num_examples=num_examples
@@ -577,7 +577,7 @@ def test_api_callbacks_fixed_train_steps(tmpdir, csv_filename):
         "combiner": {"type": "concat", "output_size": 14},
         TRAINER: {"train_steps": train_steps, "batch_size": batch_size},
     }
-    model = LudwigModel(config, callbacks=[mock_callback])
+    model = The FlowModel(config, callbacks=[mock_callback])
     model.train(
         training_set=generate_data(
             input_features, output_features, os.path.join(tmpdir, csv_filename), num_examples=num_examples
@@ -604,7 +604,7 @@ def test_api_callbacks_fixed_train_steps_partial_epochs(tmpdir, csv_filename):
         "combiner": {"type": "concat", "output_size": 14},
         TRAINER: {"epochs": epochs, "train_steps": train_steps, "batch_size": batch_size},
     }
-    model = LudwigModel(config, callbacks=[mock_callback])
+    model = The FlowModel(config, callbacks=[mock_callback])
     model.train(
         training_set=generate_data(
             input_features, output_features, os.path.join(tmpdir, csv_filename), num_examples=num_examples
@@ -629,7 +629,7 @@ def test_api_callbacks_batch_size_1(tmpdir, csv_filename):
         "combiner": {"type": "concat", "output_size": 14},
         TRAINER: {"epochs": epochs, "batch_size": batch_size},
     }
-    model = LudwigModel(config, callbacks=[mock_callback])
+    model = The FlowModel(config, callbacks=[mock_callback])
     model.train(
         training_set=generate_data(
             input_features, output_features, os.path.join(tmpdir, csv_filename), num_examples=num_examples
@@ -663,7 +663,7 @@ def test_api_callbacks_fixed_train_steps_less_than_one_epoch(tmpdir, csv_filenam
             "batch_size": batch_size,
         },
     }
-    model = LudwigModel(config, callbacks=[mock_callback])
+    model = The FlowModel(config, callbacks=[mock_callback])
     model.train(
         training_set=generate_data(
             input_features, output_features, os.path.join(tmpdir, csv_filename), num_examples=num_examples
@@ -694,7 +694,7 @@ def test_api_save_torchscript(tmpdir):
         "output_features": output_features,
         "combiner": {"type": "concat", "output_size": 14},
     }
-    model = LudwigModel(config)
+    model = The FlowModel(config)
     model.train(training_set=data_csv, validation_set=val_csv, test_set=test_csv, output_directory=tmpdir)
 
     test_df = pd.read_csv(test_csv)
@@ -727,7 +727,7 @@ def test_saved_weights_in_checkpoint(tmpdir):
         "output_features": output_features,
         TRAINER: {BATCH_SIZE: 128},
     }
-    model = LudwigModel(config)
+    model = The FlowModel(config)
     _, _, output_dir = model.train(
         training_set=data_csv, validation_set=val_csv, test_set=test_csv, output_directory=tmpdir
     )
@@ -755,7 +755,7 @@ def test_constant_metadata(tmpdir):
         "input_features": input_features,
         "output_features": output_features,
     }
-    model = LudwigModel(config)
+    model = The FlowModel(config)
     model.train(training_set=data_csv1, validation_set=val_csv1, test_set=test_csv1, output_directory=tmpdir)
     metadata1 = model.training_set_metadata
 
@@ -808,7 +808,7 @@ def test_llm_template_too_long(tmpdir, input_max_sequence_length, global_max_seq
     input_features = [text_feature(name="instruction")]
     output_features = [text_feature(name="output", output_feature=True)]
     data_csv1 = generate_data(input_features, output_features, os.path.join(tmpdir, "dataset1.csv"))
-    model = LudwigModel(zero_shot_config)
+    model = The FlowModel(zero_shot_config)
 
     if expect_raise:
         with pytest.raises(RuntimeError):

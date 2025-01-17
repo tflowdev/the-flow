@@ -12,4 +12,4 @@ Note that the documentation HTML files are in `docs/` while the Markdown sources
 
 If you are proposing a modification to the documentation you should change only the Markdown files.
 
-`api.md` is automatically generated from the docstrings in the code, so if you want to change something in that file, first modify `ludwig/api.py` docstring, then run `mkdocs/code_docs_autogen.py`, which will create `mkdocs/docs/api.md` .
+`api.md` is automatically generated from the docstrings in the code, so if you want to change something in that file, first modify `theflow/api.py` docstring, then run `mkdocs/code_docs_autogen.py`, which will create `mkdocs/docs/api.md` .

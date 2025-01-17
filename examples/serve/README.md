@@ -1,6 +1,6 @@
-# Ludwig Model Serve Example
+# The Flow Model Serve Example
 
-This example shows Ludwig's http model serving capability, which is able to load a pre-trained Ludwig model and respond to REST APIs for predictions.
+This example shows The Flow's http model serving capability, which is able to load a pre-trained The Flow model and respond to REST APIs for predictions.
 A simple client program illustrates how to invoke the REST API to retrieve predictions for provided input features.  The two REST APIs covered by this example:
 
 | REST API         | Description                     |
@@ -27,13 +27,13 @@ examples/
 - Open two terminal windows
 - In first terminal window:
   - Ensure current working directory is `examples/serve`
-  - Start ludwig model server with the `titanic` trained model.  The following command uses the default host address (`0.0.0.0`) and port number (`8000`).
+  - Start theflow model server with the `titanic` trained model.  The following command uses the default host address (`0.0.0.0`) and port number (`8000`).
 
 ```
-ludwig serve --model_path ../titanic/results/simple_experiment_simple_model/model
+theflow serve --model_path ../titanic/results/simple_experiment_simple_model/model
 ```
 
-Sample start up messages for ludwig model server
+Sample start up messages for theflow model server
 
 ```
 ███████████████████████
@@ -43,7 +43,7 @@ Sample start up messages for ludwig model server
 █ █████ █ █ █ █ █ █ █ █
 █     █  ▟█     █ █   █
 ███████████████████████
-ludwig v0.3 - Serve
+theflow v0.3 - Serve
 
 INFO:     Started server process [4429]
 INFO:     Waiting for application startup.

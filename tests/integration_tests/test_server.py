@@ -20,10 +20,10 @@ import sys
 import numpy as np
 import pytest
 
-from ludwig.api import LudwigModel
-from ludwig.constants import BATCH_SIZE, DECODER, TRAINER
-from ludwig.serve import server
-from ludwig.utils.data_utils import read_csv
+from theflow.api import The FlowModel
+from theflow.constants import BATCH_SIZE, DECODER, TRAINER
+from theflow.serve import server
+from theflow.utils.data_utils import read_csv
 from tests.integration_tests.utils import (
     audio_feature,
     category_feature,
@@ -44,7 +44,7 @@ except ImportError:
     logger.error(
         " fastapi and other serving dependencies are not installed. "
         "In order to install all serving dependencies run "
-        "pip install ludwig[serve]"
+        "pip install theflow[serve]"
     )
     sys.exit(-1)
 
@@ -64,7 +64,7 @@ def train_and_predict_model(input_features, output_features, data_csv, output_di
         "combiner": {"type": "concat", "output_size": 14},
         TRAINER: {"epochs": 2, BATCH_SIZE: 128},
     }
-    model = LudwigModel(config, backend=LocalTestBackend())
+    model = The FlowModel(config, backend=LocalTestBackend())
     model.train(
         dataset=data_csv,
         skip_save_processed_input=True,
@@ -87,7 +87,7 @@ def train_and_predict_model_with_stratified_split(input_features, output_feature
             "split": {"column": output_features[0]["column"], "probabilities": [0.7, 0.1, 0.2], "type": "stratify"},
         },
     }
-    model = LudwigModel(config, backend=LocalTestBackend())
+    model = The FlowModel(config, backend=LocalTestBackend())
     model.train(
         dataset=data_csv,
         skip_save_processed_input=True,

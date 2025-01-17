@@ -7,4 +7,4 @@ set -e
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 # Train
-ludwig train --config ${SCRIPT_DIR}/llama2_7b_4bit.yaml --dataset ludwig://alpaca
+theflow train --config ${SCRIPT_DIR}/llama2_7b_4bit.yaml --dataset theflow://alpaca

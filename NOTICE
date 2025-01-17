@@ -1,4 +1,4 @@
-Ludwig includes derived work from TensorFlow(https://github.com/tensorflow/tensorflow) under the Apache License 2.0:
+The Flow includes derived work from TensorFlow(https://github.com/tensorflow/tensorflow) under the Apache License 2.0:
 
 Copyright 2016 The prometheus-operator Authors
 
@@ -24,12 +24,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 
-The derived work can be found in the files: ludwig/models/modules/convolutional_modules.py
+The derived work can be found in the files: theflow/models/modules/convolutional_modules.py
 
 
 ------
 
-Ludwig includes derived work from Keras(https://github.com/keras-team/keras) under the MIT License:
+The Flow includes derived work from Keras(https://github.com/keras-team/keras) under the MIT License:
 
 
 COPYRIGHT

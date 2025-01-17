@@ -7,4 +7,4 @@ set -e
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 # Train
-ludwig train --config ${SCRIPT_DIR}/imdb_deepspeed_zero3_ray.yaml --dataset ludwig://imdb
+theflow train --config ${SCRIPT_DIR}/imdb_deepspeed_zero3_ray.yaml --dataset theflow://imdb

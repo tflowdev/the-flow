@@ -7,8 +7,8 @@ import torch
 import yaml
 from torchvision.utils import save_image
 
-from ludwig.api import LudwigModel
-from ludwig.datasets import camseq
+from theflow.api import The FlowModel
+from theflow.datasets import camseq
 
 # clean out prior results
 shutil.rmtree("./results", ignore_errors=True)
@@ -17,8 +17,8 @@ shutil.rmtree("./results", ignore_errors=True)
 with open("./config_camseq.yaml") as f:
     config = yaml.safe_load(f.read())
 
-# Define Ludwig model object that drive model training
-model = LudwigModel(config, logging_level=logging.INFO)
+# Define The Flow model object that drive model training
+model = The FlowModel(config, logging_level=logging.INFO)
 
 # load Camseq dataset
 df = camseq.load(split=False)

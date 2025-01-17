@@ -1,9 +1,9 @@
 import logging
 
-from ludwig.api import LudwigModel
-from ludwig.datasets import higgs
+from theflow.api import The FlowModel
+from theflow.datasets import higgs
 
-model = LudwigModel(
+model = The FlowModel(
     config="small_config.yaml",
     logging_level=logging.INFO,
 )

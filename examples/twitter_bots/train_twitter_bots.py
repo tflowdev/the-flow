@@ -6,10 +6,10 @@ import shutil
 
 import yaml
 
-from ludwig import datasets
-from ludwig.api import LudwigModel
-from ludwig.utils.fs_utils import rename
-from ludwig.visualize import confusion_matrix, learning_curves
+from theflow import datasets
+from theflow.api import The FlowModel
+from theflow.utils.fs_utils import rename
+from theflow.visualize import confusion_matrix, learning_curves
 
 if __name__ == "__main__":
     # Cleans out prior results
@@ -67,7 +67,7 @@ if __name__ == "__main__":
         """
     )
 
-    model = LudwigModel(config, logging_level=logging.INFO)
+    model = The FlowModel(config, logging_level=logging.INFO)
 
     train_stats, preprocessed_data, output_directory = model.train(dataset=training_set, output_directory=results_dir)
 

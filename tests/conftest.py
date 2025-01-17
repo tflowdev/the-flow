@@ -21,7 +21,7 @@ from unittest import mock
 
 import pytest
 
-from ludwig.constants import (
+from theflow.constants import (
     BATCH_SIZE,
     COMBINER,
     EPOCHS,
@@ -32,7 +32,7 @@ from ludwig.constants import (
     TRAINER,
     TYPE,
 )
-from ludwig.hyperopt.run import hyperopt
+from theflow.hyperopt.run import hyperopt
 from tests.integration_tests.utils import category_feature, generate_data, text_feature
 
 TEST_SUITE_TIMEOUT_S = int(os.environ.get("LUDWIG_TEST_SUITE_TIMEOUT_S", 3600))
@@ -73,7 +73,7 @@ def setup_tests(request):
         yield
         return
 
-    with mock.patch("ludwig.backend.ray.init_ray_local") as mock_init_ray_local:
+    with mock.patch("theflow.backend.ray.init_ray_local") as mock_init_ray_local:
         mock_init_ray_local.side_effect = RuntimeError("Ray must be initialized explicitly when running tests")
         yield mock_init_ray_local
 
@@ -192,7 +192,7 @@ def _ray_start(request, **kwargs):
 
     init_kwargs = _get_default_ray_kwargs()
     init_kwargs.update(kwargs)
-    # HACK(geoffrey): `hyperopt_resources` is a required resource for hyperopt to prevent deadlocks in Ludwig tests.
+    # HACK(geoffrey): `hyperopt_resources` is a required resource for hyperopt to prevent deadlocks in The Flow tests.
     #   For context, if there are 4 hyperopt trials scheduled and 7 CPUs available, then the trial driver will require
     #   some resource to run *in addition* to the resources required by the trainer downstream. If we use 1 CPU
     #   (default trial driver request), then the trial will be scheduled on 1 CPU and the trainer will later request

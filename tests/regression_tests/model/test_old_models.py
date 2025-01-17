@@ -5,16 +5,16 @@ import pandas as pd
 import pytest
 import wget
 
-from ludwig.api import LudwigModel
-from ludwig.data.dataset_synthesizer import build_synthetic_dataset_df
-from ludwig.globals import MODEL_FILE_NAME
+from theflow.api import The FlowModel
+from theflow.data.dataset_synthesizer import build_synthetic_dataset_df
+from theflow.globals import MODEL_FILE_NAME
 
 NUM_EXAMPLES = 25
 
 
 def test_model_loaded_from_old_config_prediction_works(tmpdir):
     # Titanic model based on 0.5.3.
-    old_model_url = "https://predibase-public-us-west-2.s3.us-west-2.amazonaws.com/ludwig_unit_tests/old_model.zip"
+    old_model_url = "https://predibase-public-us-west-2.s3.us-west-2.amazonaws.com/theflow_unit_tests/old_model.zip"
     old_model_filename = wget.download(old_model_url, tmpdir)
     with zipfile.ZipFile(old_model_filename, "r") as zip_ref:
         zip_ref.extractall(tmpdir)
@@ -33,8 +33,8 @@ def test_model_loaded_from_old_config_prediction_works(tmpdir):
     }
     test_set = pd.DataFrame(example_data, index=[0])
 
-    ludwig_model = LudwigModel.load(os.path.join(tmpdir, "old_model/model"))
-    predictions, _ = ludwig_model.predict(dataset=test_set)
+    theflow_model = The FlowModel.load(os.path.join(tmpdir, "old_model/model"))
+    predictions, _ = theflow_model.predict(dataset=test_set)
 
     assert predictions.to_dict()["Survived_predictions"] == {0: False}
 
@@ -42,12 +42,12 @@ def test_model_loaded_from_old_config_prediction_works(tmpdir):
 @pytest.mark.parametrize(
     "model_url",
     [
-        "https://predibase-public-us-west-2.s3.us-west-2.amazonaws.com/ludwig_unit_tests/titanic_v07.zip",
-        "https://predibase-public-us-west-2.s3.us-west-2.amazonaws.com/ludwig_unit_tests/twitter_bots_v05_1.zip",
-        "https://predibase-public-us-west-2.s3.us-west-2.amazonaws.com/ludwig_unit_tests/respiratory_v05.zip",
-        # TODO(Arnav): Re-enable once https://github.com/ludwig-ai/ludwig/issues/3150 is resolved since the GBM
+        "https://predibase-public-us-west-2.s3.us-west-2.amazonaws.com/theflow_unit_tests/titanic_v07.zip",
+        "https://predibase-public-us-west-2.s3.us-west-2.amazonaws.com/theflow_unit_tests/twitter_bots_v05_1.zip",
+        "https://predibase-public-us-west-2.s3.us-west-2.amazonaws.com/theflow_unit_tests/respiratory_v05.zip",
+        # TODO(Arnav): Re-enable once https://github.com/theflow-ai/theflow/issues/3150 is resolved since the GBM
         # model uses the PassthroughDecoder for the category output feature.
-        # "https://predibase-public-us-west-2.s3.us-west-2.amazonaws.com/ludwig_unit_tests/gbm_adult_census_income_v061.zip",  # noqa: E501
+        # "https://predibase-public-us-west-2.s3.us-west-2.amazonaws.com/theflow_unit_tests/gbm_adult_census_income_v061.zip",  # noqa: E501
     ],
     ids=["titanic", "twitter_bots", "respiratory"],  # , "gbm_adult_census_income"],
 )
@@ -59,8 +59,8 @@ def test_predict_deprecated_model(model_url, tmpdir):
     with zipfile.ZipFile(archive_path, "r") as zip_ref:
         zip_ref.extractall(model_dir)
 
-    ludwig_model = LudwigModel.load(model_dir)
-    df = build_synthetic_dataset_df(NUM_EXAMPLES, ludwig_model.config)
+    theflow_model = The FlowModel.load(model_dir)
+    df = build_synthetic_dataset_df(NUM_EXAMPLES, theflow_model.config)
 
-    pred_df, _ = ludwig_model.predict(df)
+    pred_df, _ = theflow_model.predict(df)
     assert len(pred_df) == 25

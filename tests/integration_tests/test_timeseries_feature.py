@@ -3,11 +3,11 @@ import pandas as pd
 import pytest
 import torch
 
-from ludwig.api import LudwigModel
-from ludwig.constants import COLUMN, ENCODER_OUTPUT, INPUT_FEATURES, OUTPUT_FEATURES
-from ludwig.features.timeseries_feature import TimeseriesInputFeature
-from ludwig.schema.features.timeseries_feature import TimeseriesInputFeatureConfig
-from ludwig.schema.utils import load_config_with_kwargs
+from theflow.api import The FlowModel
+from theflow.constants import COLUMN, ENCODER_OUTPUT, INPUT_FEATURES, OUTPUT_FEATURES
+from theflow.features.timeseries_feature import TimeseriesInputFeature
+from theflow.schema.features.timeseries_feature import TimeseriesInputFeatureConfig
+from theflow.schema.utils import load_config_with_kwargs
 from tests.integration_tests.utils import number_feature, timeseries_feature
 
 BATCH_SIZE = 2
@@ -67,7 +67,7 @@ def test_timeseries_preprocessing_with_nan():
     }
     df = pd.DataFrame(data)
 
-    model = LudwigModel(config)
+    model = The FlowModel(config)
     ds = model.preprocess(df)
     out_df = ds.training_set.to_df()
 

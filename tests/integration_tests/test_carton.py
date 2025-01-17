@@ -22,9 +22,9 @@ import pandas as pd
 import pytest
 import torch
 
-from ludwig.api import LudwigModel
-from ludwig.constants import BATCH_SIZE, NAME, PREDICTIONS, TRAINER
-from ludwig.utils.carton_utils import export_carton
+from theflow.api import The FlowModel
+from theflow.constants import BATCH_SIZE, NAME, PREDICTIONS, TRAINER
+from theflow.utils.carton_utils import export_carton
 from tests.integration_tests.utils import (
     binary_feature,
     category_feature,
@@ -84,9 +84,9 @@ def test_carton_torchscript(csv_filename, tmpdir):
     df[bin_str_feature[NAME]] = df[bin_str_feature[NAME]].map(lambda x: true_value if x else false_value)
     df.to_csv(training_data_csv_path)
 
-    # Train Ludwig (Pythonic) model:
-    ludwig_model = LudwigModel(config, backend=backend)
-    ludwig_model.train(
+    # Train The Flow (Pythonic) model:
+    theflow_model = The FlowModel(config, backend=backend)
+    theflow_model.train(
         dataset=training_data_csv_path,
         skip_save_training_description=True,
         skip_save_training_statistics=True,
@@ -97,11 +97,11 @@ def test_carton_torchscript(csv_filename, tmpdir):
     )
 
     # Obtain predictions from Python model
-    preds_dict, _ = ludwig_model.predict(dataset=training_data_csv_path, return_type=dict)
+    preds_dict, _ = theflow_model.predict(dataset=training_data_csv_path, return_type=dict)
 
-    # Create graph inference model (Torchscript) from trained Ludwig model.
+    # Create graph inference model (Torchscript) from trained The Flow model.
     carton_path = os.path.join(tmpdir, "carton")
-    export_carton(ludwig_model, carton_path)
+    export_carton(theflow_model, carton_path)
 
     import cartonml as carton
 
@@ -120,7 +120,7 @@ def test_carton_torchscript(csv_filename, tmpdir):
         return s.to_numpy().astype(np.float32)
 
     df = pd.read_csv(training_data_csv_path)
-    inputs = {name: to_input(df[feature.column]) for name, feature in ludwig_model.model.input_features.items()}
+    inputs = {name: to_input(df[feature.column]) for name, feature in theflow_model.model.input_features.items()}
 
     # See https://pyo3.rs/v0.20.0/ecosystem/async-await#a-note-about-asynciorun for why we wrap it
     # in another function

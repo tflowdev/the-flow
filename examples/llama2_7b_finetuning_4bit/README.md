@@ -39,5 +39,5 @@ python train_alpaca.py
 You can upload to the HuggingFace Hub from the command line:
 
 ```bash
-ludwig upload hf_hub -r <your_org>/<model_name> -m <path/to/model>
+theflow upload hf_hub -r <your_org>/<model_name> -m <path/to/model>
 ```

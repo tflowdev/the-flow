@@ -31,7 +31,7 @@ If applicable, add screenshots to help explain your problem.
 - OS: \[e.g. iOS\]
 - Version \[e.g. 22\]
 - Python version
-- Ludwig version
+- The Flow version
 
 **Additional context**
 Add any other context about the problem here.

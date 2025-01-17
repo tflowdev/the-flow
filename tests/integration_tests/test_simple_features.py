@@ -18,7 +18,7 @@ import os
 import pandas as pd
 import pytest
 
-from ludwig.constants import NAME
+from theflow.constants import NAME
 from tests.integration_tests.utils import (
     bag_feature,
     binary_feature,
@@ -34,7 +34,7 @@ from tests.integration_tests.utils import (
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-logging.getLogger("ludwig").setLevel(logging.INFO)
+logging.getLogger("theflow").setLevel(logging.INFO)
 
 
 @pytest.mark.parametrize(

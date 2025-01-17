@@ -2,7 +2,7 @@
 
 
 # Download and prepare training data set
-# Create Ludwig config file
+# Create The Flow config file
 #
 # Based on the
 # [UCI Wisconsin Breast Cancer data set](https://archive.ics.uci.edu/ml/datasets/breast+cancer+wisconsin+(original))
@@ -15,7 +15,7 @@ import requests
 import yaml
 from sklearn.model_selection import train_test_split
 
-from ludwig.constants import TRAINER
+from theflow.constants import TRAINER
 
 # Constants
 DATA_SET_URL = "https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/wdbc.data"
@@ -56,8 +56,8 @@ os.mkdir(DATA_DIR)
 train_df.to_csv(os.path.join(DATA_DIR, "train.csv"), index=False)
 test_df.to_csv(os.path.join(DATA_DIR, "test.csv"), index=False)
 
-print("Preparing Ludwig config")
-# Create ludwig input_features
+print("Preparing The Flow config")
+# Create theflow input_features
 num_features = ["X" + str(i) for i in range(1, 31)]
 input_features = []
 
@@ -70,10 +70,10 @@ for p in num_features:
     }
     input_features.append(a_feature)
 
-# Create ludwig output features
+# Create theflow output features
 output_features = [{"name": "diagnosis", "type": "binary", "num_fc_layers": 2, "output_size": 64}]
 
-# setup ludwig config
+# setup theflow config
 config = {
     "input_features": input_features,
     "output_features": output_features,

@@ -25,7 +25,7 @@ bayesian-optimization
 # search_alg: cfo and blendsearch
 flaml[blendsearch]
 
-# Disabling due to numpy installation failure https://github.com/ludwig-ai/ludwig/actions/runs/4737879639/jobs/8411146481
+# Disabling due to numpy installation failure https://github.com/theflow-ai/theflow/actions/runs/4737879639/jobs/8411146481
 # search_alg: dragonfly
 # dragonfly-opt
 

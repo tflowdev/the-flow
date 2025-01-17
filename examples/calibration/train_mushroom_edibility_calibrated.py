@@ -7,9 +7,9 @@ import shutil
 import numpy as np
 import yaml
 
-import ludwig.visualize
-from ludwig.api import LudwigModel
-from ludwig.datasets import mushroom_edibility
+import theflow.visualize
+from theflow.api import The FlowModel
+from theflow.datasets import mushroom_edibility
 
 # clean out prior results
 shutil.rmtree("./results_mushroom_edibility", ignore_errors=True)
@@ -83,7 +83,7 @@ uncalibrated_config = yaml.safe_load(config_yaml)
 scaled_config = copy.deepcopy(uncalibrated_config)
 scaled_config["output_features"][0]["calibration"] = True
 
-uncalibrated_model = LudwigModel(config=uncalibrated_config, logging_level=logging.INFO)
+uncalibrated_model = The FlowModel(config=uncalibrated_config, logging_level=logging.INFO)
 uncalibrated_model.train(
     dataset,
     model_name="uncalibrated",
@@ -91,7 +91,7 @@ uncalibrated_model.train(
     output_directory="results_mushroom_edibility",
 )
 
-scaled_model = LudwigModel(config=scaled_config, logging_level=logging.INFO)
+scaled_model = The FlowModel(config=scaled_config, logging_level=logging.INFO)
 scaled_model.train(
     dataset,
     model_name="scaled",
@@ -111,7 +111,7 @@ scaled_test_stats, scaled_test_predictions, _ = scaled_model.evaluate(
 uncalibrated_probs = np.stack(uncalibrated_test_predictions["class_probabilities"], axis=0)
 scaled_probs = np.stack(scaled_test_predictions["class_probabilities"], axis=0)
 
-ludwig.visualize.calibration_1_vs_all(
+theflow.visualize.calibration_1_vs_all(
     probabilities_per_model=[uncalibrated_probs, scaled_probs],
     model_names=["Uncalibrated", "Calibrated"],
     ground_truth=dataset["class"],

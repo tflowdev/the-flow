@@ -24,7 +24,7 @@ from typing import List, Set
 import pytest
 import yaml
 
-from ludwig.constants import (
+from theflow.constants import (
     BATCH_SIZE,
     COMBINER,
     EVAL_BATCH_SIZE,
@@ -34,16 +34,16 @@ from ludwig.constants import (
     PREPROCESSING,
     TRAINER,
 )
-from ludwig.globals import MODEL_FILE_NAME
-from ludwig.types import FeatureConfigDict
-from ludwig.utils.data_utils import load_yaml
+from theflow.globals import MODEL_FILE_NAME
+from theflow.types import FeatureConfigDict
+from theflow.utils.data_utils import load_yaml
 from tests.integration_tests.utils import category_feature, generate_data, number_feature, sequence_feature
 
 pytestmark = pytest.mark.integration_tests_b
 
 
-def _run_commands(commands, **ludwig_kwargs):
-    for arg_name, value in ludwig_kwargs.items():
+def _run_commands(commands, **theflow_kwargs):
+    for arg_name, value in theflow_kwargs.items():
         commands += ["--" + arg_name, value]
     cmdline = " ".join(commands)
     print(cmdline)
@@ -53,14 +53,14 @@ def _run_commands(commands, **ludwig_kwargs):
     return completed_process
 
 
-def _run_ludwig(command, **ludwig_kwargs):
-    commands = ["ludwig", command]
-    return _run_commands(commands, **ludwig_kwargs)
+def _run_theflow(command, **theflow_kwargs):
+    commands = ["theflow", command]
+    return _run_commands(commands, **theflow_kwargs)
 
 
-def _run_ludwig_horovod(command, **ludwig_kwargs):
-    commands = ["horovodrun", "-np", "2", "ludwig", command]
-    return _run_commands(commands, **ludwig_kwargs)
+def _run_theflow_horovod(command, **theflow_kwargs):
+    commands = ["horovodrun", "-np", "2", "theflow", command]
+    return _run_commands(commands, **theflow_kwargs)
 
 
 def _prepare_data(csv_filename, config_filename):
@@ -127,28 +127,28 @@ def _prepare_hyperopt_data(csv_filename, config_filename):
 
 
 def test_train_cli_dataset(tmpdir, csv_filename):
-    """Test training using `ludwig train --dataset`."""
+    """Test training using `theflow train --dataset`."""
     config_filename = os.path.join(tmpdir, "config.yaml")
     dataset_filename = _prepare_data(csv_filename, config_filename)
-    _run_ludwig("train", dataset=dataset_filename, config=config_filename, output_directory=str(tmpdir))
+    _run_theflow("train", dataset=dataset_filename, config=config_filename, output_directory=str(tmpdir))
 
 
 def test_train_cli_gpu_memory_limit(tmpdir, csv_filename):
-    """Test training using `ludwig train --dataset --gpu_memory_limit`."""
+    """Test training using `theflow train --dataset --gpu_memory_limit`."""
     config_filename = os.path.join(tmpdir, "config.yaml")
     dataset_filename = _prepare_data(csv_filename, config_filename)
-    _run_ludwig(
+    _run_theflow(
         "train", dataset=dataset_filename, config=config_filename, output_directory=str(tmpdir), gpu_memory_limit="0.5"
     )
 
 
 def test_train_cli_training_set(tmpdir, csv_filename):
-    """Test training using `ludwig train --training_set`."""
+    """Test training using `theflow train --training_set`."""
     config_filename = os.path.join(tmpdir, "config.yaml")
     dataset_filename = _prepare_data(csv_filename, config_filename)
     validation_filename = shutil.copyfile(dataset_filename, os.path.join(tmpdir, "validation.csv"))
     test_filename = shutil.copyfile(dataset_filename, os.path.join(tmpdir, "test.csv"))
-    _run_ludwig(
+    _run_theflow(
         "train",
         training_set=dataset_filename,
         validation_set=validation_filename,
@@ -161,10 +161,10 @@ def test_train_cli_training_set(tmpdir, csv_filename):
 @pytest.mark.distributed
 @pytest.mark.horovod
 def test_train_cli_horovod(tmpdir, csv_filename):
-    """Test training using `horovodrun -np 2 ludwig train --dataset`."""
+    """Test training using `horovodrun -np 2 theflow train --dataset`."""
     config_filename = os.path.join(tmpdir, "config.yaml")
     dataset_filename = _prepare_data(csv_filename, config_filename)
-    _run_ludwig_horovod(
+    _run_theflow_horovod(
         "train",
         dataset=dataset_filename,
         config=config_filename,
@@ -173,7 +173,7 @@ def test_train_cli_horovod(tmpdir, csv_filename):
     )
 
     # Check that `model_load_path` works correctly
-    _run_ludwig_horovod(
+    _run_theflow_horovod(
         "train",
         dataset=dataset_filename,
         config=config_filename,
@@ -183,11 +183,11 @@ def test_train_cli_horovod(tmpdir, csv_filename):
 
 
 def test_export_torchscript_cli(tmpdir, csv_filename):
-    """Test exporting Ludwig model to torchscript format."""
+    """Test exporting The Flow model to torchscript format."""
     config_filename = os.path.join(tmpdir, "config.yaml")
     dataset_filename = _prepare_data(csv_filename, config_filename)
-    _run_ludwig("train", dataset=dataset_filename, config=config_filename, output_directory=str(tmpdir))
-    _run_ludwig(
+    _run_theflow("train", dataset=dataset_filename, config=config_filename, output_directory=str(tmpdir))
+    _run_theflow(
         "export_torchscript",
         model_path=os.path.join(tmpdir, "experiment_run", MODEL_FILE_NAME),
         output_path=os.path.join(tmpdir, "torchscript"),
@@ -198,8 +198,8 @@ def test_export_mlflow_cli(tmpdir, csv_filename):
     """Test export_mlflow cli."""
     config_filename = os.path.join(tmpdir, "config.yaml")
     dataset_filename = _prepare_data(csv_filename, config_filename)
-    _run_ludwig("train", dataset=dataset_filename, config=config_filename, output_directory=str(tmpdir))
-    _run_ludwig(
+    _run_theflow("train", dataset=dataset_filename, config=config_filename, output_directory=str(tmpdir))
+    _run_theflow(
         "export_mlflow",
         model_path=os.path.join(tmpdir, "experiment_run", MODEL_FILE_NAME),
         output_path=os.path.join(tmpdir, "data/results/mlflow"),
@@ -210,15 +210,15 @@ def test_experiment_cli(tmpdir, csv_filename):
     """Test experiment cli."""
     config_filename = os.path.join(tmpdir, "config.yaml")
     dataset_filename = _prepare_data(csv_filename, config_filename)
-    _run_ludwig("experiment", dataset=dataset_filename, config=config_filename, output_directory=str(tmpdir))
+    _run_theflow("experiment", dataset=dataset_filename, config=config_filename, output_directory=str(tmpdir))
 
 
 def test_predict_cli(tmpdir, csv_filename):
     """Test predict cli."""
     config_filename = os.path.join(tmpdir, "config.yaml")
     dataset_filename = _prepare_data(csv_filename, config_filename)
-    _run_ludwig("train", dataset=dataset_filename, config=config_filename, output_directory=str(tmpdir))
-    _run_ludwig(
+    _run_theflow("train", dataset=dataset_filename, config=config_filename, output_directory=str(tmpdir))
+    _run_theflow(
         "predict",
         dataset=dataset_filename,
         model=os.path.join(tmpdir, "experiment_run", MODEL_FILE_NAME),
@@ -230,8 +230,8 @@ def test_evaluate_cli(tmpdir, csv_filename):
     """Test evaluate cli."""
     config_filename = os.path.join(tmpdir, "config.yaml")
     dataset_filename = _prepare_data(csv_filename, config_filename)
-    _run_ludwig("train", dataset=dataset_filename, config=config_filename, output_directory=str(tmpdir))
-    _run_ludwig(
+    _run_theflow("train", dataset=dataset_filename, config=config_filename, output_directory=str(tmpdir))
+    _run_theflow(
         "evaluate",
         dataset=dataset_filename,
         model=os.path.join(tmpdir, "experiment_run", MODEL_FILE_NAME),
@@ -244,15 +244,15 @@ def test_hyperopt_cli(tmpdir, csv_filename):
     """Test hyperopt cli."""
     config_filename = os.path.join(tmpdir, "config.yaml")
     dataset_filename = _prepare_hyperopt_data(csv_filename, config_filename)
-    _run_ludwig("hyperopt", dataset=dataset_filename, config=config_filename, output_directory=str(tmpdir))
+    _run_theflow("hyperopt", dataset=dataset_filename, config=config_filename, output_directory=str(tmpdir))
 
 
 def test_visualize_cli(tmpdir, csv_filename):
-    """Test Ludwig 'visualize' cli."""
+    """Test The Flow 'visualize' cli."""
     config_filename = os.path.join(tmpdir, "config.yaml")
     dataset_filename = _prepare_data(csv_filename, config_filename)
-    _run_ludwig("train", dataset=dataset_filename, config=config_filename, output_directory=str(tmpdir))
-    _run_ludwig(
+    _run_theflow("train", dataset=dataset_filename, config=config_filename, output_directory=str(tmpdir))
+    _run_theflow(
         "visualize",
         visualization="learning_curves",
         model_names="run",
@@ -265,8 +265,8 @@ def test_collect_summary_activations_weights_cli(tmpdir, csv_filename):
     """Test collect_summary cli."""
     config_filename = os.path.join(tmpdir, "config.yaml")
     dataset_filename = _prepare_data(csv_filename, config_filename)
-    _run_ludwig("train", dataset=dataset_filename, config=config_filename, output_directory=str(tmpdir))
-    assert _run_ludwig("collect_summary", model=os.path.join(tmpdir, "experiment_run", MODEL_FILE_NAME))
+    _run_theflow("train", dataset=dataset_filename, config=config_filename, output_directory=str(tmpdir))
+    assert _run_theflow("collect_summary", model=os.path.join(tmpdir, "experiment_run", MODEL_FILE_NAME))
 
 
 @pytest.mark.parametrize(
@@ -286,15 +286,15 @@ def test_collect_summary_activations_weights_cli(tmpdir, csv_filename):
 )
 def test_collect_summary_pretrained_model_cli(model_name):
     """Test collect_summary pretrained model cli."""
-    assert _run_ludwig("collect_summary", pretrained_model=model_name)
+    assert _run_theflow("collect_summary", pretrained_model=model_name)
 
 
 def test_synthesize_dataset_cli(tmpdir, csv_filename):
     """Test synthesize_data cli."""
     # test depends on default setting of --dataset_size
-    # if this parameter is specified, _run_ludwig fails when
+    # if this parameter is specified, _run_theflow fails when
     # attempting to build the cli parameter structure
-    _run_ludwig(
+    _run_theflow(
         "synthesize_dataset",
         output_path=os.path.join(tmpdir, csv_filename),
         features="'[ \
@@ -316,10 +316,10 @@ def test_synthesize_dataset_cli(tmpdir, csv_filename):
 
 
 def test_preprocess_cli(tmpdir, csv_filename):
-    """Test preprocess `ludwig preprocess."""
+    """Test preprocess `theflow preprocess."""
     config_filename = os.path.join(tmpdir, "config.yaml")
     dataset_filename = _prepare_data(csv_filename, config_filename)
-    _run_ludwig("preprocess", dataset=dataset_filename, preprocessing_config=config_filename)
+    _run_theflow("preprocess", dataset=dataset_filename, preprocessing_config=config_filename)
 
 
 @pytest.mark.parametrize("second_seed_offset", [0, 1])
@@ -336,7 +336,7 @@ def test_reproducible_cli_runs(
     backend: str, type_of_run: str, random_seed: int, second_seed_offset: int, csv_filename: str, tmpdir: pathlib.Path
 ) -> None:
     """
-    Test for reproducible training using `ludwig experiment|train --dataset`.
+    Test for reproducible training using `theflow experiment|train --dataset`.
     Args:
         backend (str): backend to use
         type_of_run(str): type of run, either train or experiment
@@ -352,9 +352,9 @@ def test_reproducible_cli_runs(
     dataset_filename = _prepare_data(csv_filename, config_filename)
 
     if backend == "local":
-        command_to_run = _run_ludwig
+        command_to_run = _run_theflow
     else:
-        command_to_run = _run_ludwig_horovod
+        command_to_run = _run_theflow_horovod
 
     # run first model
     command_to_run(
@@ -421,7 +421,7 @@ def test_init_config(tmpdir):
     dataset_csv = generate_data(input_features, output_features, os.path.join(tmpdir, "dataset.csv"), num_examples=100)
     output_config_path = os.path.join(tmpdir, "config.yaml")
 
-    _run_ludwig("init_config", dataset=dataset_csv, target=output_features[0][NAME], output=output_config_path)
+    _run_theflow("init_config", dataset=dataset_csv, target=output_features[0][NAME], output=output_config_path)
 
     config = load_yaml(output_config_path)
 
@@ -432,7 +432,7 @@ def test_init_config(tmpdir):
     assert to_name_set(config[OUTPUT_FEATURES]) == to_name_set(output_features)
 
 
-@pytest.mark.skip(reason="https://github.com/ludwig-ai/ludwig/issues/3377")
+@pytest.mark.skip(reason="https://github.com/theflow-ai/theflow/issues/3377")
 def test_render_config(tmpdir):
     """Test rendering a full config from a partial user config."""
     user_config_path = os.path.join(tmpdir, "config.yaml")
@@ -453,7 +453,7 @@ def test_render_config(tmpdir):
         yaml.dump(user_config, f)
 
     output_config_path = os.path.join(tmpdir, "rendered.yaml")
-    _run_ludwig("render_config", config=user_config_path, output=output_config_path)
+    _run_theflow("render_config", config=user_config_path, output=output_config_path)
 
     rendered_config = load_yaml(output_config_path)
     assert len(rendered_config[INPUT_FEATURES]) == len(user_config[INPUT_FEATURES])

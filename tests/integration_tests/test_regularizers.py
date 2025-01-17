@@ -5,11 +5,11 @@ import numpy as np
 import pytest
 import torch
 
-from ludwig.api import LudwigModel
-from ludwig.constants import TRAINER
-from ludwig.data.preprocessing import preprocess_for_training
-from ludwig.utils.data_utils import read_csv
-from ludwig.utils.torch_utils import get_torch_device
+from theflow.api import The FlowModel
+from theflow.constants import TRAINER
+from theflow.data.preprocessing import preprocess_for_training
+from theflow.utils.data_utils import read_csv
+from theflow.utils.torch_utils import get_torch_device
 from tests.integration_tests.utils import (
     binary_feature,
     category_feature,
@@ -72,7 +72,7 @@ def test_regularizers(
         }
 
         backend = LocalTestBackend()
-        model = LudwigModel(config, backend=backend)
+        model = The FlowModel(config, backend=backend)
         processed_data_df, _, _, _ = preprocess_for_training(model.config, data_df, backend=backend)
         with processed_data_df.initialize_batcher(batch_size=BATCH_SIZE) as batcher:
             batch = batcher.next_batch()

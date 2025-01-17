@@ -18,11 +18,11 @@ import shutil
 import numpy as np
 import torch
 
-from ludwig.api import LudwigModel
-from ludwig.collect import collect_activations, collect_weights, print_model_summary
-from ludwig.constants import BATCH_SIZE, ENCODER, TRAINER, TYPE
-from ludwig.globals import MODEL_FILE_NAME
-from ludwig.utils.torch_utils import get_torch_device
+from theflow.api import The FlowModel
+from theflow.collect import collect_activations, collect_weights, print_model_summary
+from theflow.constants import BATCH_SIZE, ENCODER, TRAINER, TYPE
+from theflow.globals import MODEL_FILE_NAME
+from theflow.utils.torch_utils import get_torch_device
 from tests.integration_tests.utils import category_feature, ENCODERS, generate_data, sequence_feature
 
 DEVICE = get_torch_device()
@@ -48,13 +48,13 @@ def _train(input_features, output_features, data_csv, **kwargs):
         TRAINER: {"epochs": 2, BATCH_SIZE: 128},
     }
 
-    model = LudwigModel(config)
+    model = The FlowModel(config)
     _, _, output_dir = model.train(dataset=data_csv, **kwargs)
     return model, output_dir
 
 
 def _get_layers(model_path):
-    model = LudwigModel.load(model_path)
+    model = The FlowModel.load(model_path)
     return [name for name, _ in model.model.named_children()]
 
 
@@ -74,7 +74,7 @@ def test_collect_weights(tmpdir, csv_filename):
         assert len(weights) == 3
 
         # Load model from disk to ensure correct weight names
-        model_loaded = LudwigModel.load(model_path)
+        model_loaded = The FlowModel.load(model_path)
         tensor_names = [name for name, w in model_loaded.collect_weights()]
         assert len(tensor_names) == 3
 

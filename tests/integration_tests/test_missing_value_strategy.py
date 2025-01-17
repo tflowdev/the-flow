@@ -19,9 +19,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from ludwig.api import LudwigModel
-from ludwig.constants import BATCH_SIZE, COLUMN, DROP_ROW, FILL_WITH_MEAN, PREPROCESSING, PROC_COLUMN, TRAINER
-from ludwig.globals import MODEL_FILE_NAME
+from theflow.api import The FlowModel
+from theflow.constants import BATCH_SIZE, COLUMN, DROP_ROW, FILL_WITH_MEAN, PREPROCESSING, PROC_COLUMN, TRAINER
+from theflow.globals import MODEL_FILE_NAME
 from tests.integration_tests.utils import (
     binary_feature,
     category_feature,
@@ -53,7 +53,7 @@ def test_missing_value_prediction(tmpdir, csv_filename):
         "output_features": output_features,
         "combiner": {"type": "concat", "output_size": 14},
     }
-    model = LudwigModel(config)
+    model = The FlowModel(config)
     _, _, output_dir = model.train(dataset=dataset, output_directory=tmpdir)
 
     # Set the input column to None, we should be able to replace the missing value with the mode
@@ -61,7 +61,7 @@ def test_missing_value_prediction(tmpdir, csv_filename):
     dataset[input_features[0]["name"]] = None
     model.predict(dataset=dataset)
 
-    model = LudwigModel.load(os.path.join(output_dir, MODEL_FILE_NAME))
+    model = The FlowModel.load(os.path.join(output_dir, MODEL_FILE_NAME))
     model.predict(dataset=dataset)
 
 
@@ -91,8 +91,8 @@ def test_missing_values_fill_with_mean(backend, csv_filename, tmpdir, ray_cluste
     }
 
     # run preprocessing
-    ludwig_model = LudwigModel(config, backend=backend)
-    ludwig_model.preprocess(dataset=training_data_csv_path)
+    theflow_model = The FlowModel(config, backend=backend)
+    theflow_model.preprocess(dataset=training_data_csv_path)
 
 
 def test_missing_values_drop_rows(csv_filename, tmpdir):
@@ -124,8 +124,8 @@ def test_missing_values_drop_rows(csv_filename, tmpdir):
     df = read_csv_with_nan(training_data_csv_path, nan_percent=0.1)
 
     # run preprocessing
-    ludwig_model = LudwigModel(config, backend=backend)
-    ludwig_model.preprocess(dataset=df)
+    theflow_model = The FlowModel(config, backend=backend)
+    theflow_model.preprocess(dataset=df)
 
 
 @pytest.mark.parametrize(
@@ -178,11 +178,11 @@ def test_outlier_strategy(outlier_strategy, outlier_threshold, backend, tmpdir, 
     }
 
     # Run preprocessing
-    ludwig_model = LudwigModel(config, backend=backend)
-    proc_dataset = ludwig_model.preprocess(training_set=dataset_fp)
+    theflow_model = The FlowModel(config, backend=backend)
+    proc_dataset = theflow_model.preprocess(training_set=dataset_fp)
 
     # Check preprocessed output
-    proc_df = ludwig_model.backend.df_engine.compute(proc_dataset.training_set.to_df())
+    proc_df = theflow_model.backend.df_engine.compute(proc_dataset.training_set.to_df())
     proc_col = input_features[0][PROC_COLUMN]
 
     assert len(proc_df) == len(dataset_df)

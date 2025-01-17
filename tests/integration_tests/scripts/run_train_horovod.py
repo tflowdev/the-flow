@@ -21,10 +21,10 @@ import sys
 import horovod.torch as hvd
 import torch
 
-import ludwig.utils.horovod_utils
-from ludwig.api import LudwigModel
-from ludwig.constants import BATCH_SIZE, TRAINER
-from ludwig.globals import MODEL_FILE_NAME
+import theflow.utils.horovod_utils
+from theflow.api import The FlowModel
+from theflow.constants import BATCH_SIZE, TRAINER
+from theflow.globals import MODEL_FILE_NAME
 
 PATH_HERE = os.path.abspath(os.path.dirname(__file__))
 PATH_ROOT = os.path.join(PATH_HERE, "..", "..", "..")
@@ -34,7 +34,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--rel-path", required=True)
 parser.add_argument("--input-features", required=True)
 parser.add_argument("--output-features", required=True)
-parser.add_argument("--ludwig-kwargs", required=True)
+parser.add_argument("--theflow-kwargs", required=True)
 
 
 def run_api_experiment(input_features, output_features, dataset, **kwargs):
@@ -45,7 +45,7 @@ def run_api_experiment(input_features, output_features, dataset, **kwargs):
         TRAINER: {"epochs": 2, BATCH_SIZE: 128},
     }
 
-    model = LudwigModel(config)
+    model = The FlowModel(config)
     output_dir = None
 
     try:
@@ -56,7 +56,7 @@ def run_api_experiment(input_features, output_features, dataset, **kwargs):
 
         # Attempt loading saved model, should broadcast successfully
         model_dir = os.path.join(output_dir, MODEL_FILE_NAME) if output_dir else None
-        loaded_model = LudwigModel.load(model_dir)
+        loaded_model = The FlowModel.load(model_dir)
 
         # Model loading should broadcast weights from coordinator
         loaded_state = loaded_model.model.state_dict()
@@ -73,7 +73,7 @@ def test_horovod_intent_classification(rel_path, input_features, output_features
 
     # Horovod should be initialized following training. If not, this will raise an exception.
     assert hvd.size() == 2
-    assert ludwig.utils.horovod_utils._HVD.rank() == hvd.rank()
+    assert theflow.utils.horovod_utils._HVD.rank() == hvd.rank()
 
 
 if __name__ == "__main__":
@@ -82,5 +82,5 @@ if __name__ == "__main__":
         args.rel_path,
         json.loads(args.input_features),
         json.loads(args.output_features),
-        **json.loads(args.ludwig_kwargs)
+        **json.loads(args.theflow_kwargs)
     )

@@ -1,6 +1,6 @@
 # Test Guide
 
-Assuming your CWD is the Ludwig repo root.
+Assuming your CWD is the The Flow repo root.
 
 ## Basic
 
@@ -64,7 +64,7 @@ def ray_cluster_2cpu(request):
 
 ## Grouped Integration Tests
 
-To leverage more runners to cut Ludwig CI time down, we partition `tests/integration_tests` into 3 groups (A, B, default). Each group should take on a roughly equal share of testing time, which at the time of writing is ~45 minutes each.
+To leverage more runners to cut The Flow CI time down, we partition `tests/integration_tests` into 3 groups (A, B, default). Each group should take on a roughly equal share of testing time, which at the time of writing is ~45 minutes each.
 
 To define a new group and use it in tests:
 
@@ -103,7 +103,7 @@ def test_something():
 
 3. Create a new GHA to run pytest with that marker.
 
-You can use [this change](https://github.com/ludwig-ai/ludwig/pull/3391/files#diff-2500680f4bc6c1b75c3d4b36372bf4d64c5f603b90bfd7a5186f66a20329d16aR189-R245) as a reference.
+You can use [this change](https://github.com/theflow-ai/theflow/pull/3391/files#diff-2500680f4bc6c1b75c3d4b36372bf4d64c5f603b90bfd7a5186f66a20329d16aR189-R245) as a reference.
 
 NOTE: Be sure to update other Integration Test GHA pytest jobs to exclude tests under the new marker.
 

@@ -27,11 +27,11 @@ import subprocess
 import numpy as np
 import pytest
 
-from ludwig.constants import BATCH_SIZE, ENCODER, TRAINER, TYPE
-from ludwig.experiment import experiment_cli
-from ludwig.globals import DESCRIPTION_FILE_NAME, PREDICTIONS_PARQUET_FILE_NAME, TEST_STATISTICS_FILE_NAME
-from ludwig.utils.data_utils import get_split_path
-from ludwig.visualize import _extract_ground_truth_values
+from theflow.constants import BATCH_SIZE, ENCODER, TRAINER, TYPE
+from theflow.experiment import experiment_cli
+from theflow.globals import DESCRIPTION_FILE_NAME, PREDICTIONS_PARQUET_FILE_NAME, TEST_STATISTICS_FILE_NAME
+from theflow.utils.data_utils import get_split_path
+from theflow.visualize import _extract_ground_truth_values
 from tests.integration_tests.test_visualization_api import obtain_df_splits
 from tests.integration_tests.utils import (
     bag_feature,
@@ -110,7 +110,7 @@ def test_visualization_learning_curves_output_saved(csv_filename):
     test_cmd_pdf = [
         "python",
         "-m",
-        "ludwig.visualize",
+        "theflow.visualize",
         "--visualization",
         "learning_curves",
         "--training_statistics",
@@ -154,7 +154,7 @@ def test_visualization_confusion_matrix_output_saved(csv_filename):
     test_cmd_pdf = [
         "python",
         "-m",
-        "ludwig.visualize",
+        "theflow.visualize",
         "--visualization",
         "confusion_matrix",
         "--test_statistics",
@@ -199,7 +199,7 @@ def test_visualization_compare_performance_output_saved(csv_filename):
     test_cmd_pdf = [
         "python",
         "-m",
-        "ludwig.visualize",
+        "theflow.visualize",
         "--visualization",
         "compare_performance",
         "--test_statistics",
@@ -248,7 +248,7 @@ def test_visualization_compare_classifiers_from_prob_csv_output_saved(csv_filena
     test_cmd_pdf = [
         "python",
         "-m",
-        "ludwig.visualize",
+        "theflow.visualize",
         "--visualization",
         "compare_classifiers_performance_from_prob",
         "--ground_truth",
@@ -305,7 +305,7 @@ def test_visualization_compare_classifiers_from_prob_npy_output_saved(csv_filena
     test_cmd_pdf = [
         "python",
         "-m",
-        "ludwig.visualize",
+        "theflow.visualize",
         "--visualization",
         "compare_classifiers_performance_from_prob",
         "--ground_truth",
@@ -362,7 +362,7 @@ def test_visualization_compare_classifiers_from_pred_npy_output_saved(csv_filena
     test_cmd_pdf = [
         "python",
         "-m",
-        "ludwig.visualize",
+        "theflow.visualize",
         "--visualization",
         "compare_classifiers_performance_from_pred",
         "--ground_truth_metadata",
@@ -419,7 +419,7 @@ def test_visualization_compare_classifiers_from_pred_csv_output_saved(csv_filena
     test_cmd_pdf = [
         "python",
         "-m",
-        "ludwig.visualize",
+        "theflow.visualize",
         "--visualization",
         "compare_classifiers_performance_from_pred",
         "--ground_truth_metadata",
@@ -474,7 +474,7 @@ def test_visualization_compare_classifiers_subset_output_saved(csv_filename):
     test_cmd_pdf = [
         "python",
         "-m",
-        "ludwig.visualize",
+        "theflow.visualize",
         "--visualization",
         "compare_classifiers_performance_subset",
         "--output_feature_name",
@@ -528,7 +528,7 @@ def test_visualization_compare_classifiers_changing_k_output_pdf(csv_filename):
     test_cmd_pdf = [
         "python",
         "-m",
-        "ludwig.visualize",
+        "theflow.visualize",
         "--visualization",
         "compare_classifiers_performance_changing_k",
         "--output_feature_name",
@@ -583,7 +583,7 @@ def test_visualization_compare_classifiers_multiclass_multimetric_output_saved(c
     test_cmd_pdf = [
         "python",
         "-m",
-        "ludwig.visualize",
+        "theflow.visualize",
         "--visualization",
         "compare_classifiers_multiclass_multimetric",
         "--output_feature_name",
@@ -632,7 +632,7 @@ def test_visualization_compare_classifiers_predictions_npy_output_saved(csv_file
     test_cmd_pdf = [
         "python",
         "-m",
-        "ludwig.visualize",
+        "theflow.visualize",
         "--visualization",
         "compare_classifiers_predictions",
         "--ground_truth",
@@ -688,7 +688,7 @@ def test_visualization_compare_classifiers_predictions_csv_output_saved(csv_file
     test_cmd_pdf = [
         "python",
         "-m",
-        "ludwig.visualize",
+        "theflow.visualize",
         "--visualization",
         "compare_classifiers_predictions",
         "--ground_truth",
@@ -743,7 +743,7 @@ def test_visualization_cmp_classifiers_predictions_distribution_output_saved(csv
     test_cmd_pdf = [
         "python",
         "-m",
-        "ludwig.visualize",
+        "theflow.visualize",
         "--visualization",
         "compare_classifiers_predictions_distribution",
         "--ground_truth",
@@ -798,7 +798,7 @@ def test_visualization_cconfidence_thresholding_output_saved(csv_filename):
     test_cmd_pdf = [
         "python",
         "-m",
-        "ludwig.visualize",
+        "theflow.visualize",
         "--visualization",
         "confidence_thresholding",
         "--ground_truth",
@@ -853,7 +853,7 @@ def test_visualization_confidence_thresholding_data_vs_acc_output_saved(csv_file
     test_cmd_pdf = [
         "python",
         "-m",
-        "ludwig.visualize",
+        "theflow.visualize",
         "--visualization",
         "confidence_thresholding_data_vs_acc",
         "--ground_truth",
@@ -908,7 +908,7 @@ def test_visualization_confidence_thresholding_data_vs_acc_subset_output_saved(c
     test_cmd_pdf = [
         "python",
         "-m",
-        "ludwig.visualize",
+        "theflow.visualize",
         "--visualization",
         "confidence_thresholding_data_vs_acc_subset",
         "--ground_truth",
@@ -965,7 +965,7 @@ def test_vis_confidence_thresholding_data_vs_acc_subset_per_class_output_saved(c
     test_cmd_pdf = [
         "python",
         "-m",
-        "ludwig.visualize",
+        "theflow.visualize",
         "--visualization",
         "confidence_thresholding_data_vs_acc_subset_per_class",
         "--ground_truth",
@@ -1034,7 +1034,7 @@ def test_vis_confidence_thresholding_2thresholds_2d_output_saved(csv_filename):
     test_cmd_pdf = [
         "python",
         "-m",
-        "ludwig.visualize",
+        "theflow.visualize",
         "--visualization",
         "confidence_thresholding_2thresholds_2d",
         "--ground_truth",
@@ -1100,7 +1100,7 @@ def test_vis_confidence_thresholding_2thresholds_3d_output_saved(csv_filename):
     test_cmd_pdf = [
         "python",
         "-m",
-        "ludwig.visualize",
+        "theflow.visualize",
         "--visualization",
         "confidence_thresholding_2thresholds_3d",
         "--ground_truth",
@@ -1166,7 +1166,7 @@ def test_visualization_binary_threshold_vs_metric_output_saved(csv_filename, bin
     test_cmd_pdf = [
         "python",
         "-m",
-        "ludwig.visualize",
+        "theflow.visualize",
         "--visualization",
         "binary_threshold_vs_metric",
         "--positive_label",
@@ -1228,7 +1228,7 @@ def test_visualization_precision_recall_curves_output_saved(csv_filename, binary
     test_cmd_pdf = [
         "python",
         "-m",
-        "ludwig.visualize",
+        "theflow.visualize",
         "--visualization",
         "precision_recall_curves",
         "--positive_label",
@@ -1282,7 +1282,7 @@ def test_visualization_precision_recall_curves_from_test_statistics_output_saved
     test_cmd_pdf = [
         "python",
         "-m",
-        "ludwig.visualize",
+        "theflow.visualize",
         "--visualization",
         "precision_recall_curves_from_test_statistics",
         "--output_feature_name",
@@ -1333,7 +1333,7 @@ def test_visualization_roc_curves_output_saved(csv_filename, binary_output_type)
     test_cmd_pdf = [
         "python",
         "-m",
-        "ludwig.visualize",
+        "theflow.visualize",
         "--visualization",
         "roc_curves",
         "--positive_label",
@@ -1389,7 +1389,7 @@ def test_visualization_roc_curves_from_test_statistics_output_saved(csv_filename
     test_cmd_pdf = [
         "python",
         "-m",
-        "ludwig.visualize",
+        "theflow.visualize",
         "--visualization",
         "roc_curves_from_test_statistics",
         "--output_feature_name",
@@ -1436,7 +1436,7 @@ def test_visualization_calibration_1_vs_all_output_saved(csv_filename):
     test_cmd_pdf = [
         "python",
         "-m",
-        "ludwig.visualize",
+        "theflow.visualize",
         "--visualization",
         "calibration_1_vs_all",
         "--metrics",
@@ -1495,7 +1495,7 @@ def test_visualization_calibration_multiclass_output_saved(csv_filename):
     test_cmd_pdf = [
         "python",
         "-m",
-        "ludwig.visualize",
+        "theflow.visualize",
         "--visualization",
         "calibration_multiclass",
         "--ground_truth",
@@ -1549,7 +1549,7 @@ def test_visualization_frequency_vs_f1_output_saved(csv_filename):
     test_cmd_pdf = [
         "python",
         "-m",
-        "ludwig.visualize",
+        "theflow.visualize",
         "--visualization",
         "frequency_vs_f1",
         "--ground_truth_metadata",

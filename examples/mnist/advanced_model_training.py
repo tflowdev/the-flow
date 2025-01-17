@@ -13,10 +13,10 @@ from collections import namedtuple
 import yaml
 
 # ## Import required libraries
-from ludwig.api import LudwigModel
-from ludwig.constants import TRAINER
-from ludwig.datasets import mnist
-from ludwig.visualize import learning_curves
+from theflow.api import The FlowModel
+from theflow.constants import TRAINER
+from theflow.datasets import mnist
+from theflow.visualize import learning_curves
 
 # clean out old results
 shutil.rmtree("./results", ignore_errors=True)
@@ -61,8 +61,8 @@ for model_option in list_of_fc_layers:
     config["input_features"][0]["fc_layers"] = model_option.fc_layers
     config[TRAINER]["epochs"] = 5
 
-    # Define Ludwig model object that drive model training
-    model = LudwigModel(config, logging_level=logging.INFO)
+    # Define The Flow model object that drive model training
+    model = The FlowModel(config, logging_level=logging.INFO)
 
     # initiate model training
     train_stats, _, _ = model.train(

@@ -8,9 +8,9 @@ import logging
 import shutil
 
 # Import required libraries
-from ludwig.api import LudwigModel
-from ludwig.datasets import imbalanced_insurance
-from ludwig.visualize import compare_performance
+from theflow.api import The FlowModel
+from theflow.datasets import imbalanced_insurance
+from theflow.visualize import compare_performance
 
 # clean out old results
 shutil.rmtree("./results", ignore_errors=True)
@@ -26,8 +26,8 @@ training_set, val_set, test_set = imbalanced_insurance.load()
 for model_id in list_of_model_ids:
     print(">>>> training: ", model_id)
 
-    # Define Ludwig model object that drive model training
-    model = LudwigModel(config=model_id + "_config.yaml", logging_level=logging.WARN)
+    # Define The Flow model object that drive model training
+    model = The FlowModel(config=model_id + "_config.yaml", logging_level=logging.WARN)
 
     # initiate model training
     train_stats, _, _ = model.train(

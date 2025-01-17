@@ -6,24 +6,24 @@ import torch
 from marshmallow_dataclass import dataclass
 from torch import nn, Tensor
 
-from ludwig.api import LudwigModel
-from ludwig.combiners.combiners import Combiner, register_combiner
-from ludwig.constants import BATCH_SIZE, ENCODER_OUTPUT, LOGITS, MINIMIZE, NUMBER, TRAINER
-from ludwig.decoders.base import Decoder
-from ludwig.decoders.registry import register_decoder
-from ludwig.encoders.base import Encoder
-from ludwig.encoders.registry import register_encoder
-from ludwig.modules.loss_modules import LogitsInputsMixin, register_loss
-from ludwig.modules.metric_modules import LossMetric, register_metric
-from ludwig.schema import utils as schema_utils
-from ludwig.schema.combiners.base import BaseCombinerConfig
-from ludwig.schema.combiners.utils import register_combiner_config
-from ludwig.schema.decoders.base import BaseDecoderConfig
-from ludwig.schema.decoders.utils import register_decoder_config
-from ludwig.schema.encoders.base import BaseEncoderConfig
-from ludwig.schema.encoders.utils import register_encoder_config
-from ludwig.schema.features.loss.loss import BaseLossConfig
-from ludwig.schema.features.loss.loss import register_loss as register_loss_schema
+from theflow.api import The FlowModel
+from theflow.combiners.combiners import Combiner, register_combiner
+from theflow.constants import BATCH_SIZE, ENCODER_OUTPUT, LOGITS, MINIMIZE, NUMBER, TRAINER
+from theflow.decoders.base import Decoder
+from theflow.decoders.registry import register_decoder
+from theflow.encoders.base import Encoder
+from theflow.encoders.registry import register_encoder
+from theflow.modules.loss_modules import LogitsInputsMixin, register_loss
+from theflow.modules.metric_modules import LossMetric, register_metric
+from theflow.schema import utils as schema_utils
+from theflow.schema.combiners.base import BaseCombinerConfig
+from theflow.schema.combiners.utils import register_combiner_config
+from theflow.schema.decoders.base import BaseDecoderConfig
+from theflow.schema.decoders.utils import register_decoder_config
+from theflow.schema.encoders.base import BaseEncoderConfig
+from theflow.schema.encoders.utils import register_encoder_config
+from theflow.schema.features.loss.loss import BaseLossConfig
+from theflow.schema.features.loss.loss import register_loss as register_loss_schema
 from tests.integration_tests.utils import (
     category_feature,
     generate_data,
@@ -185,7 +185,7 @@ def _run_test(input_features=None, output_features=None, combiner=None):
             TRAINER: {"epochs": 2, BATCH_SIZE: 128},
         }
 
-        model = LudwigModel(config, backend=LocalTestBackend())
+        model = The FlowModel(config, backend=LocalTestBackend())
         _, _, output_directory = model.train(
             dataset=data_csv,
             output_directory=tmpdir,

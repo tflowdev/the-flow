@@ -1,12 +1,12 @@
 ###################
-# ludwig specific #
+# theflow specific #
 ###################
 
 *.lock_preprocessing
 results/
-ludwig/results/
+theflow/results/
 results_*/
-ludwig_arm64/
+theflow_arm64/
 
 # ailabs-utils
 ailabs_util
@@ -139,4 +139,4 @@ examples/*/data/
 examples/*/visualizations/
 
 # benchmarking configs
-ludwig/benchmarking/configs/
+theflow/benchmarking/configs/

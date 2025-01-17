@@ -9,9 +9,9 @@ import pytest
 import torch
 from packaging.version import parse as parse_version
 
-from ludwig.api import LudwigModel
-from ludwig.callbacks import Callback
-from ludwig.constants import (
+from theflow.api import The FlowModel
+from theflow.callbacks import Callback
+from theflow.constants import (
     BATCH_SIZE,
     EFFECTIVE_BATCH_SIZE,
     EPOCHS,
@@ -21,8 +21,8 @@ from ludwig.constants import (
     OUTPUT_FEATURES,
     TRAINER,
 )
-from ludwig.distributed import init_dist_strategy
-from ludwig.globals import MODEL_FILE_NAME
+from theflow.distributed import init_dist_strategy
+from theflow.globals import MODEL_FILE_NAME
 from tests.integration_tests.utils import (
     binary_feature,
     category_feature,
@@ -36,7 +36,7 @@ from tests.integration_tests.utils import (
 )
 
 try:
-    from ludwig.backend.horovod import HorovodBackend
+    from theflow.backend.horovod import HorovodBackend
 except ImportError:
     pass
 
@@ -44,11 +44,11 @@ try:
     import dask
     import ray
 
-    from ludwig.data.dataset.ray import RayDataset
-    from ludwig.models.gbm import GBM
-    from ludwig.schema.model_config import ModelConfig
-    from ludwig.schema.trainer import GBMTrainerConfig
-    from ludwig.trainers.trainer_lightgbm import LightGBMRayTrainer
+    from theflow.data.dataset.ray import RayDataset
+    from theflow.models.gbm import GBM
+    from theflow.schema.model_config import ModelConfig
+    from theflow.schema.trainer import GBMTrainerConfig
+    from theflow.trainers.trainer_lightgbm import LightGBMRayTrainer
 
     @ray.remote
     def run_scale_lr(config, data_csv, num_workers, outdir):
@@ -67,7 +67,7 @@ try:
                     self.lr = g["lr"]
 
         callback = TestCallback()
-        model = LudwigModel(config, backend=FakeHorovodBackend(), callbacks=[callback])
+        model = The FlowModel(config, backend=FakeHorovodBackend(), callbacks=[callback])
         model.train(dataset=data_csv, output_directory=outdir)
         return callback.lr
 
@@ -91,7 +91,7 @@ def test_tune_learning_rate(tmpdir):
     val_csv = shutil.copyfile(data_csv, os.path.join(tmpdir, "validation.csv"))
     test_csv = shutil.copyfile(data_csv, os.path.join(tmpdir, "test.csv"))
 
-    model = LudwigModel(config, backend=LocalTestBackend(), logging_level=logging.INFO)
+    model = The FlowModel(config, backend=LocalTestBackend(), logging_level=logging.INFO)
     model.train(training_set=data_csv, validation_set=val_csv, test_set=test_csv, output_directory=tmpdir)
 
     assert model.config_obj.trainer.learning_rate == 0.0001
@@ -133,7 +133,7 @@ def test_ecd_tune_batch_size_and_lr(tmpdir, eval_batch_size, effective_batch_siz
         TRAINER: trainer,
     }
 
-    model = LudwigModel(config, backend=LocalTestBackend(), logging_level=logging.INFO)
+    model = The FlowModel(config, backend=LocalTestBackend(), logging_level=logging.INFO)
 
     # check preconditions
     assert model.config_obj.trainer.effective_batch_size == effective_batch_size
@@ -142,7 +142,7 @@ def test_ecd_tune_batch_size_and_lr(tmpdir, eval_batch_size, effective_batch_siz
     assert model.config_obj.trainer.eval_batch_size == eval_batch_size
     assert model.config_obj.trainer.learning_rate == "auto"
 
-    with mock.patch("ludwig.trainers.trainer.Trainer.is_cpu_training") as mock_fn:
+    with mock.patch("theflow.trainers.trainer.Trainer.is_cpu_training") as mock_fn:
         mock_fn.return_value = is_cpu
         _, _, output_directory = model.train(
             training_set=data_csv, validation_set=val_csv, test_set=test_csv, output_directory=tmpdir
@@ -178,7 +178,7 @@ def test_ecd_tune_batch_size_and_lr(tmpdir, eval_batch_size, effective_batch_siz
 
     check_postconditions(model)
 
-    model = LudwigModel.load(os.path.join(output_directory, MODEL_FILE_NAME))
+    model = The FlowModel.load(os.path.join(output_directory, MODEL_FILE_NAME))
 
     # loaded model should retain the tuned params
     check_postconditions(model)
@@ -235,7 +235,7 @@ def test_changing_parameters_on_plateau(tmpdir):
             "increase_batch_size_on_plateau": 1,
         },
     }
-    model = LudwigModel(config, backend=LocalTestBackend())
+    model = The FlowModel(config, backend=LocalTestBackend())
 
     model.train(training_set=data_csv, validation_set=val_csv, test_set=test_csv, output_directory=tmpdir)
 
@@ -253,11 +253,11 @@ def test_lightgbm_dataset_partition(ray_cluster_2cpu):
     }
     backend_config = {**RAY_BACKEND_CONFIG}
     backend_config["preprocessor_kwargs"] = {"num_cpu": 1}
-    model = LudwigModel(config, backend=backend_config)
+    model = The FlowModel(config, backend=backend_config)
     lgbm_model = GBM(ModelConfig.from_dict(config))
     trainer = LightGBMRayTrainer(GBMTrainerConfig(), lgbm_model)
 
-    def create_dataset(model: LudwigModel, size: int) -> RayDataset:
+    def create_dataset(model: The FlowModel, size: int) -> RayDataset:
         df = pd.DataFrame(
             {
                 "in_column_lm_J5T": np.random.randint(0, 1, size=(size,), dtype=np.uint8),
@@ -323,7 +323,7 @@ def test_mixed_precision(tmpdir):
     # Just test that training completes without error.
     # TODO(travis): We may want to expand upon this in the future to include some checks on model
     # convergence like gradient magnitudes, etc. Should also add distributed tests.
-    model = LudwigModel(config, backend=LocalTestBackend(), logging_level=logging.INFO)
+    model = The FlowModel(config, backend=LocalTestBackend(), logging_level=logging.INFO)
     model.train(training_set=data_csv, validation_set=val_csv, test_set=test_csv, output_directory=tmpdir)
 
 
@@ -354,7 +354,7 @@ def test_compile(tmpdir):
     # Just test that training completes without error.
     # TODO(travis): We may want to expand upon this in the future to include some checks on model
     # convergence like gradient magnitudes, etc. Should also add distributed tests.
-    model = LudwigModel(config, backend=LocalTestBackend(), logging_level=logging.INFO)
+    model = The FlowModel(config, backend=LocalTestBackend(), logging_level=logging.INFO)
     model.train(training_set=data_csv, validation_set=val_csv, test_set=test_csv, output_directory=tmpdir)
 
 
@@ -384,7 +384,7 @@ def test_gradient_accumulation(gradient_accumulation_steps: int, tmpdir):
     # Just test that training completes without error.
     # TODO(travis): We may want to expand upon this in the future to include some checks on model
     # convergence like gradient magnitudes, etc. Should also add distributed tests.
-    model = LudwigModel(config, backend=LocalTestBackend(), logging_level=logging.INFO)
+    model = The FlowModel(config, backend=LocalTestBackend(), logging_level=logging.INFO)
     model.train(training_set=data_csv, validation_set=val_csv, test_set=test_csv, output_directory=tmpdir)
 
 
@@ -410,7 +410,7 @@ def test_enable_gradient_checkpointing(tmpdir, caplog):
         },
     }
 
-    model = LudwigModel(config, backend=LocalTestBackend(), logging_level=logging.INFO)
+    model = The FlowModel(config, backend=LocalTestBackend(), logging_level=logging.INFO)
     assert model.config_obj.trainer.enable_gradient_checkpointing
 
     model.train(training_set=data_csv, validation_set=val_csv, test_set=test_csv, output_directory=tmpdir)

@@ -7,10 +7,10 @@ import pandas as pd
 import pytest
 import yaml
 
-from ludwig.api import LudwigModel
-from ludwig.config_sampling.explore_schema import combine_configs, ConfigOption, explore_properties
-from ludwig.config_validation.validation import get_schema
-from ludwig.types import ModelConfigDict
+from theflow.api import The FlowModel
+from theflow.config_sampling.explore_schema import combine_configs, ConfigOption, explore_properties
+from theflow.config_validation.validation import get_schema
+from theflow.types import ModelConfigDict
 
 from .configs import (
     COMBINER_TYPE_TO_COMBINE_FN_MAP,
@@ -23,7 +23,7 @@ from .configs import (
 def defaults_config_generator(
     feature_type: str, allow_list: str, static_schema: Dict[str, Any] = None
 ) -> Tuple[ModelConfigDict, pd.DataFrame]:
-    """Generate combinatorial configs for the defaults section of the Ludwig config.
+    """Generate combinatorial configs for the defaults section of the The Flow config.
 
     Args:
         feature_type: feature type to explore.
@@ -57,7 +57,7 @@ def defaults_config_generator(
 
 
 def ecd_trainer_config_generator(static_schema: Dict[str, Any] = None) -> Tuple[ModelConfigDict, pd.DataFrame]:
-    """Generate combinatorial configs for the ECD trainer section of the Ludwig config."""
+    """Generate combinatorial configs for the ECD trainer section of the The Flow config."""
     schema = get_schema() if not static_schema else static_schema
     properties = schema["properties"]
 
@@ -94,7 +94,7 @@ def ecd_trainer_config_generator(static_schema: Dict[str, Any] = None) -> Tuple[
 def combiner_config_generator(
     combiner_type: str, static_schema: Dict[str, Any] = None
 ) -> Tuple[ModelConfigDict, pd.DataFrame]:
-    """Generate combinatorial configs for the combiner section of the Ludwig config.
+    """Generate combinatorial configs for the combiner section of the The Flow config.
 
     Args:
         combiner_type: combiner type to explore.
@@ -125,13 +125,13 @@ def train_and_evaluate(config: ModelConfigDict, dataset: pd.DataFrame):
     """Trains and evaluates a model with the given config.
 
     Args:
-        config: valid Ludwig config.
-        dataset: Ludwig dataset name to train on.
+        config: valid The Flow config.
+        dataset: The Flow dataset name to train on.
     """
     # adding print statements to be captured in pytest stdout and help debug tests.
     print("Config used (trained on synthetic data)")
     pprint(config)
-    model = LudwigModel(config=config, callbacks=None, logging_level=logging.ERROR)
+    model = The FlowModel(config=config, callbacks=None, logging_level=logging.ERROR)
     model.train(dataset=dataset)
     model.evaluate(dataset=dataset)
 

@@ -1,6 +1,6 @@
 import pytest
 
-from ludwig.modules.reduction_modules import reduce_mode_registry
+from theflow.modules.reduction_modules import reduce_mode_registry
 from tests.integration_tests.utils import category_feature, generate_data, run_experiment, sequence_feature
 
 

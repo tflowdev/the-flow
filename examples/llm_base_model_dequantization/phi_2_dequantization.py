@@ -4,8 +4,8 @@ import os
 import yaml
 from huggingface_hub import whoami
 
-from ludwig.api import LudwigModel
-from ludwig.utils.hf_utils import upload_folder_to_hfhub
+from theflow.api import The FlowModel
+from theflow.utils.hf_utils import upload_folder_to_hfhub
 
 hf_username = whoami().get("name")
 base_model_name = "microsoft/phi-2"
@@ -38,8 +38,8 @@ config = yaml.safe_load(
   """
 )
 
-# Define Ludwig model object that drive model training
-model = LudwigModel(config=config, logging_level=logging.INFO)
+# Define The Flow model object that drive model training
+model = The FlowModel(config=config, logging_level=logging.INFO)
 model.save_dequantized_base_model(save_path=save_path)
 
 # Optional: Upload to Huggingface Hub

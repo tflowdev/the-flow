@@ -5,8 +5,8 @@ import numpy as np
 import pytest
 import torch
 
-from ludwig.constants import ENCODER_OUTPUT, ENCODER_OUTPUT_STATE, SEQUENCE
-from ludwig.encoders.registry import get_encoder_cls
+from theflow.constants import ENCODER_OUTPUT, ENCODER_OUTPUT_STATE, SEQUENCE
+from theflow.encoders.registry import get_encoder_cls
 from tests.integration_tests.utils import ENCODERS
 
 logger = logging.getLogger(__name__)

@@ -1,0 +1,62 @@
+from theflow.api_annotations import DeveloperAPI
+from theflow.constants import RANDOM
+from theflow.schema import utils as schema_utils
+from theflow.schema.metadata import PREPROCESSING_METADATA
+from theflow.schema.split import BaseSplitConfig, SplitDataclassField
+from theflow.schema.utils import theflow_dataclass
+
+
+@DeveloperAPI
+@theflow_dataclass
+class PreprocessingConfig(schema_utils.BaseMarshmallowConfig):
+    """Global preprocessing config is a dataclass that configures the parameters used for global preprocessing."""
+
+    sample_ratio: float = schema_utils.NonNegativeFloat(
+        default=1.0,
+        description="The ratio of the dataset to use. For instance, if 0.5, half of the dataset "
+        "provided will be used.",
+        parameter_metadata=PREPROCESSING_METADATA["sample_ratio"],
+    )
+
+    sample_size: float = schema_utils.NonNegativeInteger(
+        default=None,
+        allow_none=True,
+        description="The maximum number of samples from the dataset to use. Cannot be set if sample_ratio is set to be "
+        "< 1.0. If sample_ratio is set to 1.0, this will override the number of samples to used.",
+        parameter_metadata=PREPROCESSING_METADATA["sample_size"],
+    )
+
+    oversample_minority: float = schema_utils.NonNegativeFloat(
+        default=None,
+        allow_none=True,
+        description="If not None, the minority class will be oversampled to reach the specified ratio respective to "
+        "the majority class. ",
+        parameter_metadata=PREPROCESSING_METADATA["oversample_minority"],
+    )
+
+    undersample_majority: float = schema_utils.NonNegativeFloat(
+        default=None,
+        allow_none=True,
+        description="If not None, the majority class will be undersampled to reach the specified ratio respective "
+        "to the minority class. ",
+        parameter_metadata=PREPROCESSING_METADATA["undersample_majority"],
+    )
+
+    split: BaseSplitConfig = SplitDataclassField(
+        default=RANDOM,
+    )
+
+    global_max_sequence_length: int = schema_utils.PositiveInteger(
+        default=None,
+        allow_none=True,
+        description="Specifically for LLMs. This is the maximum length of the input sequence going into the model's "
+        "forward pass during training. Sequences will be truncated to this length after merging inputs and targets. "
+        "If not set, the total length of the merged input and target token sequences will be used.",
+        parameter_metadata=PREPROCESSING_METADATA["global_max_sequence_length"],
+    )
+
+
+@DeveloperAPI
+class PreprocessingField(schema_utils.DictMarshmallowField):
+    def __init__(self):
+        super().__init__(PreprocessingConfig)

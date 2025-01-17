@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from ludwig.constants import COMBINER, EPOCHS, INPUT_FEATURES, OUTPUT_FEATURES, TRAINER, TYPE
+from theflow.constants import COMBINER, EPOCHS, INPUT_FEATURES, OUTPUT_FEATURES, TRAINER, TYPE
 from tests.integration_tests.utils import binary_feature, generate_data, run_test_suite, text_feature
 
 

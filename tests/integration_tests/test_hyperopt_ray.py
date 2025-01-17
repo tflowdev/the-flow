@@ -22,16 +22,16 @@ import pandas as pd
 import pytest
 from mlflow.tracking import MlflowClient
 
-from ludwig.backend import initialize_backend
-from ludwig.callbacks import Callback
-from ludwig.constants import ACCURACY, AUTO, BATCH_SIZE, EXECUTOR, MAX_CONCURRENT_TRIALS, TRAINER
-from ludwig.contribs.mlflow import MlflowCallback
-from ludwig.globals import HYPEROPT_STATISTICS_FILE_NAME, MODEL_FILE_NAME, MODEL_HYPERPARAMETERS_FILE_NAME
-from ludwig.hyperopt.results import HyperoptResults
-from ludwig.hyperopt.run import hyperopt
-from ludwig.hyperopt.utils import update_hyperopt_params_with_defaults
-from ludwig.schema.model_config import ModelConfig
-from ludwig.utils.automl.utils import get_model_type
+from theflow.backend import initialize_backend
+from theflow.callbacks import Callback
+from theflow.constants import ACCURACY, AUTO, BATCH_SIZE, EXECUTOR, MAX_CONCURRENT_TRIALS, TRAINER
+from theflow.contribs.mlflow import MlflowCallback
+from theflow.globals import HYPEROPT_STATISTICS_FILE_NAME, MODEL_FILE_NAME, MODEL_HYPERPARAMETERS_FILE_NAME
+from theflow.hyperopt.results import HyperoptResults
+from theflow.hyperopt.run import hyperopt
+from theflow.hyperopt.utils import update_hyperopt_params_with_defaults
+from theflow.schema.model_config import ModelConfig
+from theflow.utils.automl.utils import get_model_type
 from tests.integration_tests.utils import category_feature, generate_data, text_feature
 
 try:
@@ -39,7 +39,7 @@ try:
     from ray.tune import Callback as TuneCallback
     from ray.tune.experiment.trial import Trial
 
-    from ludwig.hyperopt.execution import get_build_hyperopt_executor
+    from theflow.hyperopt.execution import get_build_hyperopt_executor
 except ImportError:
     ray = None
     Trial = None
@@ -49,7 +49,7 @@ pytestmark = pytest.mark.integration_tests_d
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-logging.getLogger("ludwig").setLevel(logging.INFO)
+logging.getLogger("theflow").setLevel(logging.INFO)
 
 HYPEROPT_CONFIG = {
     "parameters": {

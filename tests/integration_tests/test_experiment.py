@@ -25,20 +25,20 @@ import torch
 import torchvision
 import yaml
 
-from ludwig.api import LudwigModel
-from ludwig.backend import LOCAL_BACKEND
-from ludwig.callbacks import Callback
-from ludwig.constants import BATCH_SIZE, COLUMN, ENCODER, H3, NAME, PREPROCESSING, TRAINER, TYPE
-from ludwig.data.concatenate_datasets import concatenate_df
-from ludwig.data.dataset_synthesizer import build_synthetic_dataset_df
-from ludwig.data.preprocessing import preprocess_for_training
-from ludwig.encoders.registry import get_encoder_classes
-from ludwig.error import ConfigValidationError
-from ludwig.experiment import experiment_cli
-from ludwig.globals import MODEL_FILE_NAME
-from ludwig.predict import predict_cli
-from ludwig.utils.data_utils import read_csv
-from ludwig.utils.defaults import default_random_seed
+from theflow.api import The FlowModel
+from theflow.backend import LOCAL_BACKEND
+from theflow.callbacks import Callback
+from theflow.constants import BATCH_SIZE, COLUMN, ENCODER, H3, NAME, PREPROCESSING, TRAINER, TYPE
+from theflow.data.concatenate_datasets import concatenate_df
+from theflow.data.dataset_synthesizer import build_synthetic_dataset_df
+from theflow.data.preprocessing import preprocess_for_training
+from theflow.encoders.registry import get_encoder_classes
+from theflow.error import ConfigValidationError
+from theflow.experiment import experiment_cli
+from theflow.globals import MODEL_FILE_NAME
+from theflow.predict import predict_cli
+from theflow.utils.data_utils import read_csv
+from theflow.utils.defaults import default_random_seed
 from tests.integration_tests.utils import (
     audio_feature,
     bag_feature,
@@ -68,7 +68,7 @@ pytestmark = pytest.mark.integration_tests_d
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-logging.getLogger("ludwig").setLevel(logging.INFO)
+logging.getLogger("theflow").setLevel(logging.INFO)
 
 
 @pytest.mark.parametrize("encoder", TEXT_ENCODERS)
@@ -389,9 +389,9 @@ def test_experiment_image_dataset(train_format, train_in_memory, test_format, te
     config["input_features"][0]["preprocessing"]["in_memory"] = train_in_memory
     training_set_metadata = None
 
-    # define Ludwig model
+    # define The Flow model
     backend = LocalTestBackend()
-    model = LudwigModel(
+    model = The FlowModel(
         config=config,
         backend=backend,
     )
@@ -470,8 +470,8 @@ def test_experiment_dataset_formats(data_format, csv_filename):
 
     training_set_metadata = None
 
-    # define Ludwig model
-    model = LudwigModel(config=config)
+    # define The Flow model
+    model = The FlowModel(config=config)
 
     if data_format == "hdf5":
         # hdf5 format
@@ -520,7 +520,7 @@ def test_experiment_tied_weights(csv_filename):
 def test_experiment_tied_weights_sequence_combiner(csv_filename):
     """Tests that tied weights work with sequence combiners if `sequence_length` is provided.
 
-    Addresses https://github.com/ludwig-ai/ludwig/issues/3220
+    Addresses https://github.com/theflow-ai/theflow/issues/3220
     """
     input_features = [
         text_feature(
@@ -848,8 +848,8 @@ def test_experiment_model_resume_before_1st_epoch_distributed(tmpdir, ray_cluste
             pass
 
     try:
-        # Define Ludwig model object that drive model training
-        model = LudwigModel(config=config, logging_level=logging.INFO, callbacks=[InducedFailureCallback()])
+        # Define The Flow model object that drive model training
+        model = The FlowModel(config=config, logging_level=logging.INFO, callbacks=[InducedFailureCallback()])
         model.train(
             dataset=training_set,
             experiment_name="simple_experiment",
@@ -858,7 +858,7 @@ def test_experiment_model_resume_before_1st_epoch_distributed(tmpdir, ray_cluste
             output_directory=os.path.join(tmpdir, "results1"),
         )
     except RuntimeError:
-        model = LudwigModel(config=config, logging_level=logging.INFO, callbacks=[NoFailureCallback()])
+        model = The FlowModel(config=config, logging_level=logging.INFO, callbacks=[NoFailureCallback()])
         model.train(
             dataset=training_set,
             skip_save_processed_input=True,
@@ -880,7 +880,7 @@ def test_tabnet_with_batch_size_1(tmpdir, ray_cluster_4cpu):
         TRAINER: {"train_steps": 1, BATCH_SIZE: 1},
         "backend": {"type": "ray", "trainer": {"strategy": "ddp", "num_workers": 2}},
     }
-    model = LudwigModel(config=config, logging_level=logging.INFO)
+    model = The FlowModel(config=config, logging_level=logging.INFO)
     model.train(
         dataset=training_set,
         skip_save_training_description=True,
@@ -1178,7 +1178,7 @@ combiner:
     )
 
     df = build_synthetic_dataset_df(120, config)
-    model = LudwigModel(config, logging_level=logging.INFO)
+    model = The FlowModel(config, logging_level=logging.INFO)
 
     model.train(dataset=df, output_directory=tmpdir)
 
@@ -1197,7 +1197,7 @@ def test_text_output_feature_cols(tmpdir, csv_filename):
         "trainer": {"train_steps": 2, "batch_size": 5},
     }
 
-    model = LudwigModel(config, logging_level=logging.INFO)
+    model = The FlowModel(config, logging_level=logging.INFO)
     model.train(dataset=rel_path, output_directory=tmpdir)
     predict_output = model.predict(dataset=rel_path)[0]
 

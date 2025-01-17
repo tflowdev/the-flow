@@ -2,8 +2,8 @@ from collections import namedtuple
 
 import pytest
 
-from ludwig.models.base import BaseModel
-from ludwig.schema.model_config import ModelConfig
+from theflow.models.base import BaseModel
+from theflow.schema.model_config import ModelConfig
 from tests.integration_tests.utils import (
     category_feature,
     generate_data,
@@ -118,8 +118,8 @@ def test_tied_micro_level(input_feature_options):
 
 
 # TiedUseCase namedtuple structure:
-# input_feature: Ludwig synthetic data creation function.
-# output_feature: Ludwig synthetic data creation function
+# input_feature: The Flow synthetic data creation function.
+# output_feature: The Flow synthetic data creation function
 TiedUseCase = namedtuple("TiedUseCase", "input_feature output_feature")
 
 

@@ -1,4 +1,4 @@
-"""Ludwig: Data-centric declarative deep learning framework."""
+"""The Flow: Data-centric declarative deep learning framework."""
 from codecs import open
 from os import path
 
@@ -48,22 +48,22 @@ with open(path.join(here, "requirements_extra.txt"), encoding="utf-8") as f:
     extra_requirements["extra"] = [line.strip() for line in f if line]
 
 setup(
-    name="ludwig",
-    version="0.10.4.dev",
-    description="Declarative machine learning: End-to-end machine learning pipelines using data-driven configurations.",
+    name="the-flow",
+    version="0.1.0",
+    description="AI Framework for Solana: Build, deploy, and scale AI models that seamlessly integrate with blockchain applications.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/ludwig-ai/ludwig",
-    download_url="https://pypi.org/project/ludwig/",
-    author="Piero Molino",
-    author_email="piero.molino@gmail.com",
+    url="https://github.com/tflowdev/the-flow",
+    download_url="https://pypi.org/project/the-flow/",
+    author="The Flow",
+    author_email="team@tflow.dev",
     license="Apache 2.0",
-    keywords="ludwig deep learning deep_learning machine machine_learning natural language processing computer vision",
+    keywords="solana blockchain ai machine_learning deep_learning defi analytics real_time transaction_processing",
     packages=find_packages(exclude=["contrib", "docs", "tests"]),
     python_requires=">=3.8",
     include_package_data=True,
-    package_data={"ludwig": ["etc/*", "examples/*.py"]},
+    package_data={"theflow": ["etc/*", "examples/*.py"]},
     install_requires=requirements,
     extras_require=extra_requirements,
-    entry_points={"console_scripts": ["ludwig=ludwig.cli:main"]},
+    entry_points={"console_scripts": ["theflow=theflow.cli:main"]},
 )

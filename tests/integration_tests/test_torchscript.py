@@ -23,15 +23,15 @@ import pytest
 import torch
 import torchtext
 
-from ludwig.api import LudwigModel
-from ludwig.backend import RAY
-from ludwig.constants import BATCH_SIZE, COMBINER, EVAL_BATCH_SIZE, LOGITS, NAME, PREDICTIONS, PROBABILITIES, TRAINER
-from ludwig.data.preprocessing import preprocess_for_prediction
-from ludwig.features.number_feature import numeric_transformation_registry
-from ludwig.globals import TRAIN_SET_METADATA_FILE_NAME
-from ludwig.models.inference import to_inference_module_input_from_dataframe
-from ludwig.utils import output_feature_utils
-from ludwig.utils.tokenizers import TORCHSCRIPT_COMPATIBLE_TOKENIZERS
+from theflow.api import The FlowModel
+from theflow.backend import RAY
+from theflow.constants import BATCH_SIZE, COMBINER, EVAL_BATCH_SIZE, LOGITS, NAME, PREDICTIONS, PROBABILITIES, TRAINER
+from theflow.data.preprocessing import preprocess_for_prediction
+from theflow.features.number_feature import numeric_transformation_registry
+from theflow.globals import TRAIN_SET_METADATA_FILE_NAME
+from theflow.models.inference import to_inference_module_input_from_dataframe
+from theflow.utils import output_feature_utils
+from theflow.utils.tokenizers import TORCHSCRIPT_COMPATIBLE_TOKENIZERS
 from tests.integration_tests import utils
 from tests.integration_tests.utils import (
     audio_feature,
@@ -124,8 +124,8 @@ def test_torchscript(tmpdir, csv_filename, should_load_model, model_type):
         # Disable feature filtering to avoid having no features due to small test dataset,
         # see https://stackoverflow.com/a/66405983/5222402
         config[TRAINER] = {"num_boost_round": 2, "feature_pre_filter": False}
-    ludwig_model = LudwigModel(config, backend=backend)
-    ludwig_model.train(
+    theflow_model = The FlowModel(config, backend=backend)
+    theflow_model.train(
         dataset=data_csv_path,
         skip_save_training_description=True,
         skip_save_training_statistics=True,
@@ -136,50 +136,50 @@ def test_torchscript(tmpdir, csv_filename, should_load_model, model_type):
     )
 
     ###################
-    # save Ludwig model
+    # save The Flow model
     ###################
-    ludwigmodel_path = os.path.join(dir_path, "ludwigmodel")
-    shutil.rmtree(ludwigmodel_path, ignore_errors=True)
-    ludwig_model.save(ludwigmodel_path)
+    theflowmodel_path = os.path.join(dir_path, "theflowmodel")
+    shutil.rmtree(theflowmodel_path, ignore_errors=True)
+    theflow_model.save(theflowmodel_path)
 
     ###################
-    # load Ludwig model
+    # load The Flow model
     ###################
     if should_load_model:
-        ludwig_model = LudwigModel.load(ludwigmodel_path, backend=backend)
+        theflow_model = The FlowModel.load(theflowmodel_path, backend=backend)
 
     ##############################
     # collect weight tensors names
     ##############################
-    original_predictions_df, _ = ludwig_model.predict(dataset=data_csv_path)
-    original_weights = deepcopy(list(ludwig_model.model.parameters()))
+    original_predictions_df, _ = theflow_model.predict(dataset=data_csv_path)
+    original_weights = deepcopy(list(theflow_model.model.parameters()))
     original_weights = [t.cpu() for t in original_weights]
 
     # Move the model to CPU for tracing
-    ludwig_model.model.cpu()
+    theflow_model.model.cpu()
 
     #################
     # save torchscript
     #################
     torchscript_path = os.path.join(dir_path, "torchscript")
     shutil.rmtree(torchscript_path, ignore_errors=True)
-    ludwig_model.model.save_torchscript(torchscript_path)
+    theflow_model.model.save_torchscript(torchscript_path)
 
     ###################################################
-    # load Ludwig model, obtain predictions and weights
+    # load The Flow model, obtain predictions and weights
     ###################################################
-    ludwig_model = LudwigModel.load(ludwigmodel_path, backend=backend)
-    loaded_prediction_df, _ = ludwig_model.predict(dataset=data_csv_path)
-    loaded_weights = deepcopy(list(ludwig_model.model.parameters()))
+    theflow_model = The FlowModel.load(theflowmodel_path, backend=backend)
+    loaded_prediction_df, _ = theflow_model.predict(dataset=data_csv_path)
+    loaded_weights = deepcopy(list(theflow_model.model.parameters()))
     loaded_weights = [t.cpu() for t in loaded_weights]
 
     #####################################################
     # restore torchscript, obtain predictions and weights
     #####################################################
-    training_set_metadata_json_fp = os.path.join(ludwigmodel_path, TRAIN_SET_METADATA_FILE_NAME)
+    training_set_metadata_json_fp = os.path.join(theflowmodel_path, TRAIN_SET_METADATA_FILE_NAME)
 
     dataset, training_set_metadata = preprocess_for_prediction(
-        ludwig_model.config_obj.to_dict(),
+        theflow_model.config_obj.to_dict(),
         dataset=data_csv_path,
         training_set_metadata=training_set_metadata_json_fp,
         include_outputs=False,
@@ -190,11 +190,11 @@ def test_torchscript(tmpdir, csv_filename, should_load_model, model_type):
 
     # Check the outputs for one of the features for correctness
     # Here we choose the first output feature (categorical)
-    of_name = list(ludwig_model.model.output_features.keys())[0]
+    of_name = list(theflow_model.model.output_features.keys())[0]
 
     data_to_predict = {
         name: torch.from_numpy(dataset.dataset[feature.proc_column])
-        for name, feature in ludwig_model.model.input_features.items()
+        for name, feature in theflow_model.model.input_features.items()
     }
 
     # Get predictions from restored torchscript.
@@ -363,7 +363,7 @@ def test_torchscript_e2e_audio(csv_filename, tmpdir):
 @pytest.mark.parametrize(
     "kwargs",
     [
-        {"encoder": {"type": "stacked_cnn"}},  # Ludwig custom encoder
+        {"encoder": {"type": "stacked_cnn"}},  # The Flow custom encoder
         {"encoder": {"type": "alexnet", "use_pretrained": False}},  # TorchVision pretrained model encoder
     ],
 )
@@ -551,14 +551,14 @@ def test_torchscript_preproc_vector_alternative_type(tmpdir, csv_filename, vecto
     }
     training_data_csv_path = generate_data(input_features, output_features, data_csv_path)
 
-    # Initialize Ludwig model
-    ludwig_model, script_module = initialize_torchscript_module(tmpdir, config, backend, training_data_csv_path)
+    # Initialize The Flow model
+    theflow_model, script_module = initialize_torchscript_module(tmpdir, config, backend, training_data_csv_path)
 
     # Obtain preprocessed inputs from Python model
     preproc_inputs_expected, _ = preprocess_for_prediction(
-        ludwig_model.config_obj.to_dict(),
+        theflow_model.config_obj.to_dict(),
         training_data_csv_path,
-        ludwig_model.training_set_metadata,
+        theflow_model.training_set_metadata,
         backend=backend,
         include_outputs=False,
     )
@@ -616,14 +616,14 @@ def test_torchscript_preproc_timeseries_alternative_type(tmpdir, csv_filename, p
     }
     training_data_csv_path = generate_data(input_features, output_features, data_csv_path, nan_percent=0.2)
 
-    # Initialize Ludwig model
-    ludwig_model, script_module = initialize_torchscript_module(tmpdir, config, backend, training_data_csv_path)
+    # Initialize The Flow model
+    theflow_model, script_module = initialize_torchscript_module(tmpdir, config, backend, training_data_csv_path)
 
     # Obtain preprocessed inputs from Python model
     preproc_inputs_expected, _ = preprocess_for_prediction(
-        ludwig_model.config_obj.to_dict(),
+        theflow_model.config_obj.to_dict(),
         training_data_csv_path,
-        ludwig_model.training_set_metadata,
+        theflow_model.training_set_metadata,
         backend=backend,
         include_outputs=False,
     )
@@ -686,14 +686,14 @@ def test_torchscript_preproc_with_nans(tmpdir, csv_filename, feature):
     }
     training_data_csv_path = generate_data(input_features, output_features, data_csv_path, nan_percent=0.2)
 
-    # Initialize Ludwig model
-    ludwig_model, script_module = initialize_torchscript_module(tmpdir, config, backend, training_data_csv_path)
+    # Initialize The Flow model
+    theflow_model, script_module = initialize_torchscript_module(tmpdir, config, backend, training_data_csv_path)
 
     # Obtain preprocessed inputs from Python model
     preproc_inputs_expected, _ = preprocess_for_prediction(
-        ludwig_model.config_obj.to_dict(),
+        theflow_model.config_obj.to_dict(),
         training_data_csv_path,
-        ludwig_model.training_set_metadata,
+        theflow_model.training_set_metadata,
         backend=backend,
         include_outputs=False,
     )
@@ -838,8 +838,8 @@ def test_torchscript_postproc_gpu(tmpdir, csv_filename, feature_fn):
 
 
 def validate_torchscript_outputs(tmpdir, config, backend, training_data_csv_path, tolerance=1e-8):
-    # Train Ludwig (Pythonic) model:
-    ludwig_model, script_module = initialize_torchscript_module(
+    # Train The Flow (Pythonic) model:
+    theflow_model, script_module = initialize_torchscript_module(
         tmpdir,
         config,
         backend,
@@ -847,7 +847,7 @@ def validate_torchscript_outputs(tmpdir, config, backend, training_data_csv_path
     )
 
     # Obtain predictions from Python model
-    preds_dict, _ = ludwig_model.predict(dataset=training_data_csv_path, return_type=dict)
+    preds_dict, _ = theflow_model.predict(dataset=training_data_csv_path, return_type=dict)
 
     df = pd.read_csv(training_data_csv_path)
     inputs = to_inference_module_input_from_dataframe(df, config, load_paths=True)
@@ -870,13 +870,13 @@ def validate_torchscript_outputs(tmpdir, config, backend, training_data_csv_path
             assert utils.has_no_grad(output_values), f'"{feature_name}.{output_name}" tensors have gradients'
             assert utils.is_all_close(
                 output_values, output_values_expected
-            ), f'"{feature_name}.{output_name}" tensors are not close to ludwig model'
+            ), f'"{feature_name}.{output_name}" tensors are not close to theflow model'
 
 
 def initialize_torchscript_module(tmpdir, config, backend, training_data_csv_path, device=None):
-    # Initialize Ludwig model
-    ludwig_model = LudwigModel(config, backend=backend)
-    ludwig_model.train(
+    # Initialize The Flow model
+    theflow_model = The FlowModel(config, backend=backend)
+    theflow_model.train(
         dataset=training_data_csv_path,
         skip_save_training_description=True,
         skip_save_training_statistics=True,
@@ -886,14 +886,14 @@ def initialize_torchscript_module(tmpdir, config, backend, training_data_csv_pat
         skip_save_processed_input=True,
     )
 
-    # Put torchscript model on GPU if available (LudwigModel will run train/predict on GPU if available)
+    # Put torchscript model on GPU if available (The FlowModel will run train/predict on GPU if available)
     if device is None:
         device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
-    # Create graph inference model (Torchscript) from trained Ludwig model.
-    script_module = ludwig_model.to_torchscript(device=device)
+    # Create graph inference model (Torchscript) from trained The Flow model.
+    script_module = theflow_model.to_torchscript(device=device)
     # Ensure torchscript saving/loading does not affect final predictions.
     script_module_path = os.path.join(tmpdir, "inference_module.pt")
     torch.jit.save(script_module, script_module_path)
     script_module = torch.jit.load(script_module_path)
-    return ludwig_model, script_module
+    return theflow_model, script_module

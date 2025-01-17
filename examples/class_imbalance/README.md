@@ -6,7 +6,7 @@ This API example is based on Kaggle's [Imbalanced Insurance](https://www.kaggle.
 
 Create and download your [Kaggle API Credentials](https://github.com/Kaggle/kaggle-api#api-credentials).
 
-The Imbalanced Insurance dataset is hosted by Kaggle, and as such Ludwig will need to authenticate you through the Kaggle API to download the dataset.
+The Imbalanced Insurance dataset is hosted by Kaggle, and as such The Flow will need to authenticate you through the Kaggle API to download the dataset.
 
 ### Examples
 
@@ -47,4 +47,4 @@ Here is the comparison of model performances on ROC_AUC and Accuracy:
 
 ![](../images/compare_performance_Response.png)
 
-The creation of the learning curves is demonstrated in the Jupyter notebook `model_training_results.ipynb`. The comparison plot was generated using the ludwig visualize [compare performance](https://ludwig-ai.github.io/ludwig-docs/0.4/user_guide/visualizations/#compare-performance) command.
+The creation of the learning curves is demonstrated in the Jupyter notebook `model_training_results.ipynb`. The comparison plot was generated using the theflow visualize [compare performance](https://theflow-ai.github.io/theflow-docs/0.4/user_guide/visualizations/#compare-performance) command.

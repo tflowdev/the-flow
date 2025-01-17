@@ -11,7 +11,7 @@ accounts, the remaining 12425 are bots.
 
 Create and download your [Kaggle API Credentials](https://github.com/Kaggle/kaggle-api#api-credentials).
 
-The Twitter Bots dataset is hosted by Kaggle, Ludwig will need to authenticate you through the Kaggle API to download
+The Twitter Bots dataset is hosted by Kaggle, The Flow will need to authenticate you through the Kaggle API to download
 the dataset.
 
 ### Examples

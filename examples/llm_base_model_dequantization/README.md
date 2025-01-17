@@ -1,6 +1,6 @@
 # Convert quantized base model to fp16
 
-Ludwig has utility functions to convert nf4 quantized bitsandbytes base models back to fp16
+The Flow has utility functions to convert nf4 quantized bitsandbytes base models back to fp16
 for more efficient inference. This is desireable since inference with bitsandbytes is slow because
 every forward pass through the model requires dequantizing the model weights from nf4 to fp16 layer
 by layer and then quantizing it back to nf4 to keep memory usage constant.
@@ -37,7 +37,7 @@ without sacrificing on inference performance.
 ## Running the example script
 
 The example `phi_2_dequantization.py` shows how you how you can quantize and then dequantized Phi-2. This process
-can be repeated for any other base model supported by Ludwig that is quantized using 4 bits nf4 bitsandbytes quantization. You will need a GPU to run the script successfully.
+can be repeated for any other base model supported by The Flow that is quantized using 4 bits nf4 bitsandbytes quantization. You will need a GPU to run the script successfully.
 
 Beneath the surface, this script:
 
@@ -50,10 +50,10 @@ Make sure you update the paths at the top of the file for base model, save path,
 
 ## Bonus
 
-If desired, you can also use Ludwig to push the new dequantized model weights straight to HuggingFace hub!
+If desired, you can also use The Flow to push the new dequantized model weights straight to HuggingFace hub!
 
 ```python
-from ludwig.utils.hf_utils import upload_folder_to_hfhub
+from theflow.utils.hf_utils import upload_folder_to_hfhub
 
 upload_folder_to_hfhub(repo_id=hfhub_repo_id, folder_path=save_path)
 ```

@@ -3,7 +3,7 @@ import os
 
 import yaml
 
-from ludwig.api import LudwigModel
+from theflow.api import The FlowModel
 
 config = yaml.safe_load(
     """
@@ -38,16 +38,16 @@ backend:
 """
 )
 
-# Define Ludwig model object that drive model training
-model = LudwigModel(config=config, logging_level=logging.INFO)
+# Define The Flow model object that drive model training
+model = The FlowModel(config=config, logging_level=logging.INFO)
 
 # initiate model training
 (
     train_stats,  # dictionary containing training statistics
-    preprocessed_data,  # tuple Ludwig Dataset objects of pre-processed training data
+    preprocessed_data,  # tuple The Flow Dataset objects of pre-processed training data
     output_directory,  # location of training results stored on disk
 ) = model.train(
-    dataset="ludwig://alpaca",
+    dataset="theflow://alpaca",
     experiment_name="alpaca_instruct_4bit",
     model_name="llama2_7b",
 )

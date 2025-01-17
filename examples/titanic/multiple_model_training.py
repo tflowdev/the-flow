@@ -8,9 +8,9 @@ import logging
 import shutil
 
 # ## Import required libraries
-from ludwig.api import LudwigModel
-from ludwig.datasets import titanic
-from ludwig.visualize import learning_curves
+from theflow.api import The FlowModel
+from theflow.datasets import titanic
+from theflow.visualize import learning_curves
 
 # clean out old results
 shutil.rmtree("./results", ignore_errors=True)
@@ -26,8 +26,8 @@ training_set, _, _ = titanic.load(split=True)
 for model_id in list_of_model_ids:
     print(">>>> training: ", model_id)
 
-    # Define Ludwig model object that drive model training
-    model = LudwigModel(config="./" + model_id + "_config.yaml", logging_level=logging.WARN)
+    # Define The Flow model object that drive model training
+    model = The FlowModel(config="./" + model_id + "_config.yaml", logging_level=logging.WARN)
 
     # initiate model training
     train_stats, _, _ = model.train(

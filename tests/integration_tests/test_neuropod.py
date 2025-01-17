@@ -23,9 +23,9 @@ import pytest
 import torch
 from packaging.version import parse as parse_version
 
-from ludwig.api import LudwigModel
-from ludwig.constants import BATCH_SIZE, NAME, PREDICTIONS, TRAINER
-from ludwig.utils.neuropod_utils import export_neuropod
+from theflow.api import The FlowModel
+from theflow.constants import BATCH_SIZE, NAME, PREDICTIONS, TRAINER
+from theflow.utils.neuropod_utils import export_neuropod
 from tests.integration_tests.utils import (
     binary_feature,
     category_feature,
@@ -89,9 +89,9 @@ def test_neuropod_torchscript(csv_filename, tmpdir):
     df[bin_str_feature[NAME]] = df[bin_str_feature[NAME]].map(lambda x: true_value if x else false_value)
     df.to_csv(training_data_csv_path)
 
-    # Train Ludwig (Pythonic) model:
-    ludwig_model = LudwigModel(config, backend=backend)
-    ludwig_model.train(
+    # Train The Flow (Pythonic) model:
+    theflow_model = The FlowModel(config, backend=backend)
+    theflow_model.train(
         dataset=training_data_csv_path,
         skip_save_training_description=True,
         skip_save_training_statistics=True,
@@ -102,11 +102,11 @@ def test_neuropod_torchscript(csv_filename, tmpdir):
     )
 
     # Obtain predictions from Python model
-    preds_dict, _ = ludwig_model.predict(dataset=training_data_csv_path, return_type=dict)
+    preds_dict, _ = theflow_model.predict(dataset=training_data_csv_path, return_type=dict)
 
-    # Create graph inference model (Torchscript) from trained Ludwig model.
+    # Create graph inference model (Torchscript) from trained The Flow model.
     neuropod_path = os.path.join(tmpdir, "neuropod")
-    export_neuropod(ludwig_model, neuropod_path)
+    export_neuropod(theflow_model, neuropod_path)
 
     from neuropod.loader import load_neuropod
 
@@ -118,7 +118,7 @@ def test_neuropod_torchscript(csv_filename, tmpdir):
         return s.to_numpy().astype(np.float32)
 
     df = pd.read_csv(training_data_csv_path)
-    inputs = {name: to_input(df[feature.column]) for name, feature in ludwig_model.model.input_features.items()}
+    inputs = {name: to_input(df[feature.column]) for name, feature in theflow_model.model.input_features.items()}
     outputs = neuropod_module.infer(inputs)
 
     # Compare results from Python trained model against Neuropod

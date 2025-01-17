@@ -2,12 +2,12 @@ import logging
 
 import pandas as pd
 
-from ludwig.api import LudwigModel
-from ludwig.datasets import amazon_employee_access_challenge
+from theflow.api import The FlowModel
+from theflow.datasets import amazon_employee_access_challenge
 
 df = amazon_employee_access_challenge.load()
 
-model = LudwigModel(config="config.yaml", logging_level=logging.INFO)
+model = The FlowModel(config="config.yaml", logging_level=logging.INFO)
 
 training_statistics, preprocessed_data, output_directory = model.train(
     df,

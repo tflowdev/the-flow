@@ -20,8 +20,8 @@ from typing import Dict, Tuple
 
 import pytest
 
-from ludwig.backend import initialize_backend
-from ludwig.constants import (
+from theflow.backend import initialize_backend
+from theflow.constants import (
     ACCURACY,
     AUTO,
     BATCH_SIZE,
@@ -44,13 +44,13 @@ from ludwig.constants import (
     TYPE,
     VALIDATION,
 )
-from ludwig.globals import HYPEROPT_STATISTICS_FILE_NAME, MODEL_FILE_NAME
-from ludwig.hyperopt.results import HyperoptResults
-from ludwig.hyperopt.run import hyperopt
-from ludwig.hyperopt.utils import update_hyperopt_params_with_defaults
-from ludwig.schema.model_config import ModelConfig
-from ludwig.utils import fs_utils
-from ludwig.utils.data_utils import load_json, use_credentials
+from theflow.globals import HYPEROPT_STATISTICS_FILE_NAME, MODEL_FILE_NAME
+from theflow.hyperopt.results import HyperoptResults
+from theflow.hyperopt.run import hyperopt
+from theflow.hyperopt.utils import update_hyperopt_params_with_defaults
+from theflow.schema.model_config import ModelConfig
+from theflow.utils import fs_utils
+from theflow.utils.data_utils import load_json, use_credentials
 from tests.integration_tests.utils import (
     category_feature,
     generate_data,
@@ -62,7 +62,7 @@ from tests.integration_tests.utils import (
 
 ray = pytest.importorskip("ray")
 
-from ludwig.hyperopt.execution import get_build_hyperopt_executor, RayTuneExecutor  # noqa
+from theflow.hyperopt.execution import get_build_hyperopt_executor, RayTuneExecutor  # noqa
 
 pytestmark = [pytest.mark.distributed, pytest.mark.integration_tests_a]
 
@@ -108,7 +108,7 @@ SCHEDULERS_FOR_TESTING = [
 ]
 
 
-def _setup_ludwig_config(dataset_fp: str, model_type: str = MODEL_ECD) -> Tuple[Dict, str]:
+def _setup_theflow_config(dataset_fp: str, model_type: str = MODEL_ECD) -> Tuple[Dict, str]:
     input_features = [category_feature(encoder={"vocab_size": 3})]
     output_features = [category_feature(decoder={"vocab_size": 3})]
 
@@ -148,7 +148,7 @@ def test_hyperopt_search_alg(
     validation_metric=None,
     split="validation",
 ):
-    config, rel_path = _setup_ludwig_config(csv_filename, model_type)
+    config, rel_path = _setup_theflow_config(csv_filename, model_type)
 
     hyperopt_config = HYPEROPT_CONFIG.copy()
 
@@ -227,7 +227,7 @@ def test_hyperopt_with_split(split, csv_filename, tmpdir, ray_cluster_7cpu):
 def test_hyperopt_scheduler(
     scheduler, model_type, csv_filename, tmpdir, ray_cluster_7cpu, validate_output_feature=False, validation_metric=None
 ):
-    config, rel_path = _setup_ludwig_config(csv_filename, model_type)
+    config, rel_path = _setup_theflow_config(csv_filename, model_type)
 
     hyperopt_config = HYPEROPT_CONFIG.copy()
 
@@ -374,7 +374,7 @@ def test_hyperopt_run_hyperopt(csv_filename, search_space, tmpdir, ray_cluster_7
     _run_hyperopt_run_hyperopt(csv_filename, search_space, tmpdir, "local", ray_cluster_7cpu)
 
 
-@pytest.mark.parametrize("fs_protocol,bucket", [private_param(("s3", "ludwig-tests"))], ids=["s3"])
+@pytest.mark.parametrize("fs_protocol,bucket", [private_param(("s3", "theflow-tests"))], ids=["s3"])
 def test_hyperopt_sync_remote(fs_protocol, bucket, csv_filename, ray_cluster_7cpu):
     backend = {
         "type": "local",
@@ -449,7 +449,7 @@ def test_hyperopt_with_feature_specific_parameters(csv_filename, tmpdir, ray_clu
 
 def test_hyperopt_old_config(csv_filename, tmpdir, ray_cluster_7cpu):
     old_config = {
-        "ludwig_version": "0.4",
+        "theflow_version": "0.4",
         INPUT_FEATURES: [
             {"name": "cat1", TYPE: "category", "encoder": {"vocab_size": 2}},
             {"name": "num1", TYPE: "number"},

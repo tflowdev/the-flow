@@ -22,9 +22,9 @@ import pandas as pd
 import pytest
 import torch
 
-from ludwig.api import LudwigModel
-from ludwig.constants import BATCH_SIZE, DECODER, NAME, TRAINER
-from ludwig.globals import MODEL_FILE_NAME
+from theflow.api import The FlowModel
+from theflow.constants import BATCH_SIZE, DECODER, NAME, TRAINER
+from theflow.globals import MODEL_FILE_NAME
 from tests.integration_tests.utils import (
     binary_feature,
     category_feature,
@@ -91,7 +91,7 @@ def test_binary_predictions(tmpdir, backend, distinct_values, ray_cluster_2cpu):
     }
 
     patch_args = (
-        "ludwig.features.binary_feature.BinaryOutputFeature.logits",
+        "theflow.features.binary_feature.BinaryOutputFeature.logits",
         partial(random_binary_logits, num_predict_samples=len(data_df)),
     )
 
@@ -155,7 +155,7 @@ def test_binary_predictions_with_number_dtype(tmpdir, backend, distinct_values, 
     }
 
     patch_args = (
-        "ludwig.features.binary_feature.BinaryOutputFeature.logits",
+        "theflow.features.binary_feature.BinaryOutputFeature.logits",
         partial(random_binary_logits, num_predict_samples=len(data_df)),
     )
 
@@ -207,7 +207,7 @@ def test_set_feature_saving(tmpdir, pct_positive):
     }
 
     patch_args = (
-        "ludwig.features.set_feature.SetOutputFeature.logits",
+        "theflow.features.set_feature.SetOutputFeature.logits",
         partial(
             random_set_logits,
             num_predict_samples=len(data_df),
@@ -216,12 +216,12 @@ def test_set_feature_saving(tmpdir, pct_positive):
         ),
     )
 
-    preds_df, ludwig_model = predict_with_backend(tmpdir, config, data_csv_path, backend, patch_args=patch_args)
+    preds_df, theflow_model = predict_with_backend(tmpdir, config, data_csv_path, backend, patch_args=patch_args)
     cols = set(preds_df.columns)
     assert f"{feature[NAME]}_predictions" in cols
     assert f"{feature[NAME]}_probabilities" in cols
 
-    backend = ludwig_model.backend
+    backend = theflow_model.backend
     backend.df_engine.to_parquet(preds_df, os.path.join(tmpdir, "preds.parquet"))  # test saving
 
 
@@ -230,18 +230,18 @@ def predict_with_backend(tmpdir, config, data_csv_path, backend, patch_args=None
         backend = RAY_BACKEND_CONFIG
         backend["processor"]["type"] = "dask"
 
-    ludwig_model = LudwigModel(config, backend=backend)
-    _, _, output_directory = ludwig_model.train(
+    theflow_model = The FlowModel(config, backend=backend)
+    _, _, output_directory = theflow_model.train(
         dataset=data_csv_path,
         output_directory=os.path.join(tmpdir, "output"),
     )
     # Check that metadata JSON saves and loads correctly
-    ludwig_model = LudwigModel.load(os.path.join(output_directory, MODEL_FILE_NAME))
+    theflow_model = The FlowModel.load(os.path.join(output_directory, MODEL_FILE_NAME))
 
     if patch_args is not None:
         with mock.patch(*patch_args):
-            preds_df, _ = ludwig_model.predict(dataset=data_csv_path)
+            preds_df, _ = theflow_model.predict(dataset=data_csv_path)
     else:
-        preds_df, _ = ludwig_model.predict(dataset=data_csv_path)
+        preds_df, _ = theflow_model.predict(dataset=data_csv_path)
 
-    return preds_df, ludwig_model
+    return preds_df, theflow_model

@@ -1,6 +1,6 @@
 # Hyperparameter Optimization
 
-Demonstrates hyperparameter optimization using Ludwig's in-built capabilities.
+Demonstrates hyperparameter optimization using The Flow's in-built capabilities.
 
 ### Preparatory Steps
 
@@ -19,10 +19,10 @@ hyperopt/
 Jupyter notebook `model_hyperopt_example.ipynb` demonstrates several hyperparameter optimization capabilities. Key features demonstrated in the notebook:
 
 - Training data is prepared for use
-- Programmatically create Ludwig config dictionary from the training data dataframe
+- Programmatically create The Flow config dictionary from the training data dataframe
 - Setup parameter space for hyperparameter optimization
 - Perform two hyperparameter runs
   - Parallel workers using random search strategy
   - Serial processing using random search strategy
   - Parallel workers using grid search strategy (Note: takes about 35 minutes)
-- Demonstrate various Ludwig visualizations for hyperparameter optimization
+- Demonstrate various The Flow visualizations for hyperparameter optimization

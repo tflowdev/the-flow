@@ -4,11 +4,11 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from ludwig.constants import CHECKSUM, META, TEST, TRAINING, VALIDATION
-from ludwig.data.cache.manager import alphanum, CacheManager
-from ludwig.data.cache.types import CacheableDataframe, wrap
-from ludwig.data.dataset.pandas import PandasDatasetManager
-from ludwig.globals import TRAINING_PREPROC_FILE_NAME
+from theflow.constants import CHECKSUM, META, TEST, TRAINING, VALIDATION
+from theflow.data.cache.manager import alphanum, CacheManager
+from theflow.data.cache.types import CacheableDataframe, wrap
+from theflow.data.dataset.pandas import PandasDatasetManager
+from theflow.globals import TRAINING_PREPROC_FILE_NAME
 from tests.integration_tests.utils import category_feature, LocalTestBackend, sequence_feature
 
 

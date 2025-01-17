@@ -2,15 +2,15 @@
 
 # # Simple Model Training Example
 #
-# This example is the API example for this Ludwig command line example
-# (https://ludwig-ai.github.io/ludwig-docs/latest/examples/mnist/).
+# This example is the API example for this The Flow command line example
+# (https://theflow-ai.github.io/theflow-docs/latest/examples/mnist/).
 import logging
 import shutil
 
 import yaml
 
-from ludwig.api import LudwigModel
-from ludwig.datasets import mnist
+from theflow.api import The FlowModel
+from theflow.datasets import mnist
 
 # clean out prior results
 shutil.rmtree("./results", ignore_errors=True)
@@ -19,8 +19,8 @@ shutil.rmtree("./results", ignore_errors=True)
 with open("./config.yaml") as f:
     config = yaml.safe_load(f.read())
 
-# Define Ludwig model object that drive model training
-model = LudwigModel(config, logging_level=logging.INFO)
+# Define The Flow model object that drive model training
+model = The FlowModel(config, logging_level=logging.INFO)
 
 # load and split MNIST dataset
 training_set, test_set, _ = mnist.load(split=True)

@@ -12,9 +12,9 @@ import pytest
 import torch
 import yaml
 
-import ludwig.error as ludwig_error
-from ludwig.api import LudwigModel
-from ludwig.constants import (
+import theflow.error as theflow_error
+from theflow.api import The FlowModel
+from theflow.constants import (
     ADAPTER,
     BACKEND,
     BASE_MODEL,
@@ -39,11 +39,11 @@ from ludwig.constants import (
     TRAINER,
     TYPE,
 )
-from ludwig.globals import MODEL_FILE_NAME, MODEL_WEIGHTS_FILE_NAME
-from ludwig.models.llm import LLM
-from ludwig.schema.model_types.base import ModelConfig
-from ludwig.utils.fs_utils import list_file_names_in_directory
-from ludwig.utils.types import DataFrame
+from theflow.globals import MODEL_FILE_NAME, MODEL_WEIGHTS_FILE_NAME
+from theflow.models.llm import LLM
+from theflow.schema.model_types.base import ModelConfig
+from theflow.utils.fs_utils import list_file_names_in_directory
+from theflow.utils.types import DataFrame
 from tests.integration_tests.utils import category_feature, generate_data, text_feature
 
 pytestmark = pytest.mark.llm
@@ -148,7 +148,7 @@ def test_llm_text_to_text(tmpdir, backend, ray_cluster_4cpu):
         BACKEND: backend,
     }
 
-    model = LudwigModel(config)
+    model = The FlowModel(config)
     model.train(dataset=dataset_filename, output_directory=str(tmpdir), skip_save_processed_input=True)
 
     preds, _ = model.predict(dataset=dataset_filename, output_directory=str(tmpdir), split="test")
@@ -229,7 +229,7 @@ def test_llm_zero_shot_classification(tmpdir, backend, ray_cluster_4cpu):
         BACKEND: backend,
     }
 
-    model = LudwigModel(config)
+    model = The FlowModel(config)
     model.train(dataset=df, output_directory=str(tmpdir), skip_save_processed_input=True)
 
     prediction_df = pd.DataFrame(
@@ -313,11 +313,11 @@ def test_llm_few_shot_classification(tmpdir, backend, csv_filename, ray_cluster_
     df["output"] = np.random.choice([1, 2, 3, 4, 5], size=len(df)).astype(str)  # ensure labels match the feature config
     df.to_csv(dataset_path, index=False)
 
-    model = LudwigModel(config)
+    model = The FlowModel(config)
     model.train(dataset=dataset_path, output_directory=str(tmpdir), skip_save_processed_input=True)
 
     # TODO: fix LLM model loading
-    # model = LudwigModel.load(os.path.join(results.output_directory, "model"), backend=backend)
+    # model = The FlowModel.load(os.path.join(results.output_directory, "model"), backend=backend)
     preds, _ = model.predict(dataset=dataset_path)
     preds = convert_preds(preds)
 
@@ -552,7 +552,7 @@ def _verify_lm_lora_finetuning_layers(
         ),
         # TODO: <Alex>02/21/2024: Disabling AdaptionPrompt (waiting for PEFT release to fix
         # "TypeError: LlamaRotaryEmbedding.forward() missing 1 required positional argument: 'position_ids')"
-        # (this is reflected in https://github.com/ludwig-ai/ludwig/issues/3938).
+        # (this is reflected in https://github.com/theflow-ai/theflow/issues/3938).
         # </Alex>
         # pytest.param(
         #     "adaption_prompt",
@@ -616,11 +616,11 @@ def test_llm_finetuning_strategies(tmpdir, csv_filename, backend, finetune_strat
     output_directory: str = str(tmpdir)
     model_directory: str = pathlib.Path(output_directory) / "api_experiment_run" / MODEL_FILE_NAME
 
-    model = LudwigModel(config)
+    model = The FlowModel(config)
     model.train(dataset=train_df, output_directory=output_directory, skip_save_processed_input=False)
 
     # Make sure we can load the saved model and then use it for predictions
-    model = LudwigModel.load(str(model_directory), backend=backend)
+    model = The FlowModel.load(str(model_directory), backend=backend)
 
     base_model = LLM(ModelConfig.from_dict(config))
     assert not _compare_models(base_model, model.model)  # noqa F821
@@ -662,11 +662,11 @@ def test_llm_finetuning_strategies_quantized(tmpdir, csv_filename, finetune_stra
     config["backend"] = backend
     config[QUANTIZATION] = quantization
 
-    model = LudwigModel(config)
+    model = The FlowModel(config)
     model.train(dataset=train_df, output_directory=str(tmpdir), skip_save_processed_input=False)
 
     # Make sure we can load the saved model and then use it for predictions
-    model = LudwigModel.load(os.path.join(str(tmpdir), "api_experiment_run", MODEL_FILE_NAME))
+    model = The FlowModel.load(os.path.join(str(tmpdir), "api_experiment_run", MODEL_FILE_NAME))
 
     base_model = LLM(ModelConfig.from_dict(config))
     assert not _compare_models(base_model, model.model)  # noqa F821
@@ -738,7 +738,7 @@ def test_llm_lora_finetuning_merge_and_unload_quantized_accelerate_required(
         QUANTIZATION: quantization,
     }
 
-    model = LudwigModel(config)
+    model = The FlowModel(config)
 
     error_class: type  # noqa [F842]  # incorrect flagging of "local variable is annotated but never used
     error_message: str  # noqa [F842]  # incorrect flagging of "local variable is annotated but never used
@@ -774,13 +774,13 @@ def test_llm_lora_finetuning_merge_and_unload_4_bit_quantization_not_supported(l
         BACKEND: local_backend,
     }
 
-    expected_error_class: type = ludwig_error.ConfigValidationError
+    expected_error_class: type = theflow_error.ConfigValidationError
     expected_error_message: str = """This operation will entail merging LoRA layers on a 4-bit quantized model.  \
 Calling "save_pretrained()" on that model is currently unsupported.  If you want to merge the LoRA adapter weights \
 into the base model, you need to use 8-bit quantization or do non-quantized based training by removing the \
-quantization section from your Ludwig configuration."""
+quantization section from your The Flow configuration."""
     with pytest.raises(expected_error_class) as excinfo:
-        _ = LudwigModel(config)
+        _ = The FlowModel(config)
 
     assert str(excinfo.value) == expected_error_message
 
@@ -899,7 +899,7 @@ def test_llm_lora_finetuning_merge_and_unload(
         pathlib.Path(output_directory) / "api_experiment_run" / MODEL_FILE_NAME / MODEL_WEIGHTS_FILE_NAME
     )
 
-    model = LudwigModel(config)
+    model = The FlowModel(config)
     model.train(dataset=train_df, output_directory=output_directory, skip_save_processed_input=False)
 
     # Get actual "target_modules" from trained model (to be used in assertions).
@@ -919,7 +919,7 @@ def test_llm_lora_finetuning_merge_and_unload(
     )
 
     # Make sure we can load the saved model and verify that the LoRA layers have expected shapes.
-    model = LudwigModel.load(str(model_directory), backend=backend)
+    model = The FlowModel.load(str(model_directory), backend=backend)
     _verify_lm_lora_finetuning_layers(
         attention_layer=model.model.model.base_model.model.transformer.h[1].attn,
         target_modules=target_modules,
@@ -955,7 +955,7 @@ def test_llm_training_with_gradient_checkpointing(tmpdir, csv_filename, use_adap
     if use_adapter:
         config[ADAPTER] = {TYPE: "lora"}
 
-    model = LudwigModel(config)
+    model = The FlowModel(config)
     assert model.config_obj.trainer.enable_gradient_checkpointing
 
     model.train(dataset=df, output_directory=str(tmpdir), skip_save_processed_input=False)
@@ -1048,7 +1048,7 @@ def test_default_max_sequence_length():
         "adalora",
         # TODO: <Alex>02/21/2024: Disabling AdaptionPrompt (waiting for PEFT release to fix
         # "TypeError: LlamaRotaryEmbedding.forward() missing 1 required positional argument: 'position_ids')"
-        # (this is reflected in https://github.com/ludwig-ai/ludwig/issues/3938).
+        # (this is reflected in https://github.com/theflow-ai/theflow/issues/3938).
         # </Alex>
         # "adaption_prompt",
     ],
@@ -1098,7 +1098,7 @@ def test_load_pretrained_adapter_weights(adapter):
 
 
 def _compare_models(model_1: torch.nn.Module, model_2: torch.nn.Module) -> bool:
-    # For a full explanation of this 8-bit workaround, see https://github.com/ludwig-ai/ludwig/pull/3606
+    # For a full explanation of this 8-bit workaround, see https://github.com/theflow-ai/theflow/pull/3606
 
     # TODO: Uncomment "filter_for_weight_format()" method definition and enable its usage once GPU tests are set up.
     # def filter_for_weight_format(i):
@@ -1213,7 +1213,7 @@ def test_llm_finetuning_with_embedding_noise(
     if embedding_noise:
         config["model_parameters"] = {"neftune_noise_alpha": embedding_noise}
 
-    model = LudwigModel(config)
+    model = The FlowModel(config)
 
     if embedding_noise:
         assert model.config_obj.model_parameters.neftune_noise_alpha == embedding_noise
@@ -1223,7 +1223,7 @@ def test_llm_finetuning_with_embedding_noise(
     model.train(dataset=train_df, output_directory=output_directory, skip_save_processed_input=False)
 
     # Make sure we can load the saved model and then use it for predictions
-    model = LudwigModel.load(str(model_directory), backend=LOCAL_BACKEND)
+    model = The FlowModel.load(str(model_directory), backend=LOCAL_BACKEND)
 
     base_model = LLM(ModelConfig.from_dict(config))
     assert not _compare_models(base_model, model.model)  # noqa F821
@@ -1287,7 +1287,7 @@ def test_llm_encoding(llm_encoder_config, adapter, quantization, tmpdir):
 
     generate_data(input_features=config[INPUT_FEATURES], output_features=config[OUTPUT_FEATURES], filename=dataset_path)
 
-    model = LudwigModel(config)
+    model = The FlowModel(config)
     model.train(dataset=dataset_path, output_directory=str(tmpdir))
 
 
@@ -1320,7 +1320,7 @@ def test_llm_batch_size_tuning():
     base_model: HuggingFaceH4/tiny-random-LlamaForCausalLM
         """
     )
-    model = LudwigModel(config=config)
+    model = The FlowModel(config=config)
     model.train(dataset=dataset)
     assert model.config_obj.trainer.batch_size > 1
 
@@ -1351,7 +1351,7 @@ def test_llm_used_tokens(tmpdir):
 
     config[ADAPTER] = {TYPE: "lora"}
 
-    model = LudwigModel(config)
+    model = The FlowModel(config)
     assert model.config_obj.trainer.enable_gradient_checkpointing
 
     model.train(dataset=df, output_directory=str(tmpdir), skip_save_processed_input=False)

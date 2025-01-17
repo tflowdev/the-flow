@@ -12,7 +12,7 @@ import sys
 import tempfile
 from unittest.mock import Mock
 
-from ludwig.contribs.wandb import WandbCallback
+from theflow.contribs.wandb import WandbCallback
 
 PATH_HERE = os.path.abspath(os.path.dirname(__file__))
 PATH_ROOT = os.path.join(PATH_HERE, "..", "..", "..")

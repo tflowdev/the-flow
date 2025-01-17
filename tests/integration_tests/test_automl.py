@@ -7,11 +7,11 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from ludwig.api import LudwigModel
-from ludwig.constants import COLUMN, ENCODER, INPUT_FEATURES, NAME, OUTPUT_FEATURES, PREPROCESSING, SPLIT, TYPE
-from ludwig.schema.model_types.base import ModelConfig
-from ludwig.types import FeatureConfigDict, ModelConfigDict
-from ludwig.utils.misc_utils import merge_dict
+from theflow.api import The FlowModel
+from theflow.constants import COLUMN, ENCODER, INPUT_FEATURES, NAME, OUTPUT_FEATURES, PREPROCESSING, SPLIT, TYPE
+from theflow.schema.model_types.base import ModelConfig
+from theflow.types import FeatureConfigDict, ModelConfigDict
+from theflow.utils.misc_utils import merge_dict
 from tests.integration_tests.utils import (
     binary_feature,
     category_feature,
@@ -29,9 +29,9 @@ ray = pytest.importorskip("ray")
 import dask.dataframe as dd  # noqa E402
 from ray.tune.experiment.trial import Trial  # noqa E402
 
-from ludwig.automl import auto_train, create_auto_config, train_with_config  # noqa E402
-from ludwig.automl.automl import OUTPUT_DIR  # noqa E402
-from ludwig.hyperopt.execution import RayTuneExecutor  # noqa E402
+from theflow.automl import auto_train, create_auto_config, train_with_config  # noqa E402
+from theflow.automl.automl import OUTPUT_DIR  # noqa E402
+from theflow.hyperopt.execution import RayTuneExecutor  # noqa E402
 
 pytestmark = [pytest.mark.distributed, pytest.mark.integration_tests_c]
 
@@ -197,7 +197,7 @@ def test_create_auto_config(test_data, expectations, ray_cluster_2cpu, request):
     df = dd.read_csv(dataset_csv)
     config = create_auto_config(df, targets, time_limit_s=600, backend="ray")
 
-    # Ensure our configs are using the latest Ludwig schema
+    # Ensure our configs are using the latest The Flow schema
     ModelConfig.from_dict(config)
 
     assert to_name_set(config[INPUT_FEATURES]) == to_name_set(input_features)
@@ -231,7 +231,7 @@ def test_autoconfig_preprocessing_balanced():
 
     config = create_auto_config(dataset=df, target="category", time_limit_s=1)
 
-    # Ensure our configs are using the latest Ludwig schema
+    # Ensure our configs are using the latest The Flow schema
     ModelConfig.from_dict(config)
 
     assert PREPROCESSING not in config
@@ -243,7 +243,7 @@ def test_autoconfig_preprocessing_imbalanced():
 
     config = create_auto_config(dataset=df, target="category", time_limit_s=1)
 
-    # Ensure our configs are using the latest Ludwig schema
+    # Ensure our configs are using the latest The Flow schema
     ModelConfig.from_dict(config)
 
     assert PREPROCESSING in config
@@ -265,7 +265,7 @@ def test_autoconfig_preprocessing_text_image(tmpdir):
 
     config = create_auto_config(dataset=df, target=target, time_limit_s=1)
 
-    # Ensure our configs are using the latest Ludwig schema
+    # Ensure our configs are using the latest The Flow schema
     ModelConfig.from_dict(config)
 
     # Check no features shuffled around
@@ -306,7 +306,7 @@ def test_auto_train(test_data_tabular_large, ray_cluster_2cpu, tmpdir):
 
 
 @pytest.mark.slow
-@pytest.mark.parametrize("fs_protocol,bucket", [private_param(("s3", "ludwig-tests"))], ids=["s3"])
+@pytest.mark.parametrize("fs_protocol,bucket", [private_param(("s3", "theflow-tests"))], ids=["s3"])
 def test_train_with_config_remote(fs_protocol, bucket, test_data_tabular_large, ray_cluster_2cpu):
     backend = {
         "type": "local",
@@ -357,7 +357,7 @@ def _run_train_with_config(time_budget, test_data, tmpdir, **kwargs):
     }
 
     fn = RayTuneExecutor._evaluate_best_model
-    with mock.patch("ludwig.hyperopt.execution.RayTuneExecutor._evaluate_best_model") as mock_fn:
+    with mock.patch("theflow.hyperopt.execution.RayTuneExecutor._evaluate_best_model") as mock_fn:
         # We need to check that _evaluate_best_model is called when the time_budget is low
         # as this code path should be triggered when the trial was early stopped
         mock_fn.side_effect = fn
@@ -374,7 +374,7 @@ def _run_train_with_config(time_budget, test_data, tmpdir, **kwargs):
             best_model = None
 
         if time_budget > 1:
-            assert isinstance(best_model, LudwigModel)
+            assert isinstance(best_model, The FlowModel)
             assert best_model.config_obj.trainer.early_stop == -1
             # assert mock_fn.call_count == 1
         else:

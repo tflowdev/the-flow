@@ -16,9 +16,9 @@ from unittest.mock import Mock, patch
 # Comet must be imported before the libraries it wraps
 import comet_ml  # noqa
 
-from ludwig.api import LudwigModel
-from ludwig.constants import BATCH_SIZE, TRAINER
-from ludwig.contribs.comet import CometCallback
+from theflow.api import The FlowModel
+from theflow.constants import BATCH_SIZE, TRAINER
+from theflow.contribs.comet import CometCallback
 
 # Bad key will ensure Comet is initialized, but nothing is uploaded externally.
 os.environ["COMET_API_KEY"] = "key"
@@ -52,7 +52,7 @@ def run(csv_filename):
         }
 
         callback = CometCallback()
-        model = LudwigModel(config, callbacks=[callback])
+        model = The FlowModel(config, callbacks=[callback])
 
         # Wrap these methods so we can check that they were called
         callback.on_train_init = Mock(side_effect=callback.on_train_init)

@@ -3,8 +3,8 @@ from typing import Callable, Tuple, Union
 
 import torch
 
-from ludwig.constants import ENCODER_OUTPUT
-from ludwig.utils.torch_utils import LudwigModule
+from theflow.constants import ENCODER_OUTPUT
+from theflow.utils.torch_utils import The FlowModule
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +14,7 @@ class ParameterUpdateError(Exception):
 
 
 def check_module_parameters_updated(
-    module: LudwigModule,
+    module: The FlowModule,
     module_input_args: Tuple,
     module_target: torch.Tensor,
     loss_function: Union[Callable, None] = None,
@@ -22,9 +22,9 @@ def check_module_parameters_updated(
     learning_rate: float = 0.001,
 ) -> Tuple:
     """
-    Reports on the number of parameters in a Ludwig component and their update status.
+    Reports on the number of parameters in a The Flow component and their update status.
     Args:
-        module: (LudwigModel) model to be tested.
+        module: (The FlowModel) model to be tested.
         module_input_args: (tuple) input for model
         module_target: (Tensor) target values for computing loss and parameter updates
         loss_function: (None or Callable) Optional for module specific loss calculation

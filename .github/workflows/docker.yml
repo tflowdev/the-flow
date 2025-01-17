@@ -11,9 +11,9 @@ jobs:
   start-runner:
     name: Start self-hosted EC2 runner
     if: >
-      github.event_name == 'schedule' && github.repository == 'ludwig-ai/ludwig' ||
-      github.event_name == 'push' && github.repository == 'ludwig-ai/ludwig' ||
-      github.event_name == 'pull_request' && github.event.pull_request.base.repo.full_name == 'ludwig-ai/ludwig' && !github.event.pull_request.head.repo.fork
+      github.event_name == 'schedule' && github.repository == 'theflow-ai/theflow' ||
+      github.event_name == 'push' && github.repository == 'theflow-ai/theflow' ||
+      github.event_name == 'pull_request' && github.event.pull_request.base.repo.full_name == 'theflow-ai/theflow' && !github.event.pull_request.head.repo.fork
     runs-on: ubuntu-latest
     outputs:
       label: ${{ steps.start-ec2-runner.outputs.label }}
@@ -39,7 +39,7 @@ jobs:
           security-group-id: sg-4cba0d08
           aws-resource-tags: >
             [
-              {"Key": "Name", "Value": "ludwig-github-${{ github.head_ref || github.sha }}"},
+              {"Key": "Name", "Value": "theflow-github-${{ github.head_ref || github.sha }}"},
               {"Key": "GitHubRepository", "Value": "${{ github.repository }}"},
               {"Key": "GitHubHeadRef", "Value": "${{ github.head_ref }}"},
               {"Key": "GitHubSHA", "Value": "${{ github.sha }}"}
@@ -61,10 +61,10 @@ jobs:
       fail-fast: false
       matrix:
         docker-image:
-          - ludwig
-          - ludwig-gpu
-          - ludwig-ray
-          - ludwig-ray-gpu
+          - theflow
+          - theflow-gpu
+          - theflow-ray
+          - theflow-ray-gpu
 
     steps:
       - name: Checkout
@@ -76,7 +76,7 @@ jobs:
         with:
           # list of Docker images to use as base name for tags
           images: |
-            ludwigai/${{ matrix.docker-image }}
+            theflowai/${{ matrix.docker-image }}
           # generate Docker tags based on the following events/attributes
           tags: |
             type=schedule

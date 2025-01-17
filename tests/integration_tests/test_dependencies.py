@@ -3,17 +3,17 @@ import logging
 import pytest
 import torch
 
-from ludwig.combiners.combiners import ConcatCombiner
-from ludwig.constants import CATEGORY, DECODER, NUMBER, SEQUENCE, TYPE
-from ludwig.models.base import BaseModel
-from ludwig.modules.reduction_modules import SequenceReducer
-from ludwig.schema.model_config import ModelConfig
-from ludwig.utils import output_feature_utils
+from theflow.combiners.combiners import ConcatCombiner
+from theflow.constants import CATEGORY, DECODER, NUMBER, SEQUENCE, TYPE
+from theflow.models.base import BaseModel
+from theflow.modules.reduction_modules import SequenceReducer
+from theflow.schema.model_config import ModelConfig
+from theflow.utils import output_feature_utils
 from tests.integration_tests.utils import generate_output_features_with_dependencies, number_feature
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-logging.getLogger("ludwig").setLevel(logging.INFO)
+logging.getLogger("theflow").setLevel(logging.INFO)
 
 BATCH_SIZE = 16
 SEQ_SIZE = 12

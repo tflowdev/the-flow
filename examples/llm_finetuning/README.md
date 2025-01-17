@@ -1,16 +1,16 @@
 # LLM Fine-tuning
 
 These examples show you how to fine-tune Large Language Models by taking advantage of model parallelism
-with [DeepSpeed](https://www.deepspeed.ai/), allowing Ludwig to scale to very large models with billions of
+with [DeepSpeed](https://www.deepspeed.ai/), allowing The Flow to scale to very large models with billions of
 parameters.
 
 The task here will be to fine-tune a large billion+ LLM to classify the sentiment of [IMDB movie reviews](https://www.kaggle.com/datasets/lakshmi25npathi/imdb-dataset-of-50k-movie-reviews). As such, we'll be taking a pretrained LLM, attaching a classification head,
-and fine-tuning the weights to improve performance of the LLM on the task. Ludwig will do this for you without no machine learning
+and fine-tuning the weights to improve performance of the LLM on the task. The Flow will do this for you without no machine learning
 code, just configuration.
 
 ## Prerequisites
 
-- Installed Ludwig with `ludwig[distributed]` dependencies
+- Installed The Flow with `theflow[distributed]` dependencies
 - Have a CUDA-enabled version of PyTorch installed
 - Have access to a machine or cluster of machines with multiple GPUs
 - The IMDB dataset used in these examples comes from Kaggle, so make sure you have your credentials set (e.g., `$HOME/.kaggle.kaggle.json`)
@@ -29,7 +29,7 @@ From the head node of your Ray cluster:
 
 ### Python API
 
-If you want to run Ludwig programatically (from a notebook or as part of a larger workflow), you can run the following
+If you want to run The Flow programatically (from a notebook or as part of a larger workflow), you can run the following
 Python script using the Ray cluster launcher from your local machine.
 
 ```bash

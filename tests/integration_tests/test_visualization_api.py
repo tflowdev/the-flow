@@ -20,12 +20,12 @@ from tempfile import TemporaryDirectory
 import numpy as np
 import pytest
 
-from ludwig import visualize
-from ludwig.api import LudwigModel, TrainingStats
-from ludwig.constants import BATCH_SIZE, ENCODER, NAME, PREDICTIONS, PROBABILITIES, PROBABILITY, TRAINER, TYPE
-from ludwig.data.split import get_splitter
-from ludwig.globals import HYPEROPT_STATISTICS_FILE_NAME
-from ludwig.utils.data_utils import read_csv
+from theflow import visualize
+from theflow.api import The FlowModel, TrainingStats
+from theflow.constants import BATCH_SIZE, ENCODER, NAME, PREDICTIONS, PROBABILITIES, PROBABILITY, TRAINER, TYPE
+from theflow.data.split import get_splitter
+from theflow.globals import HYPEROPT_STATISTICS_FILE_NAME
+from theflow.utils.data_utils import read_csv
 from tests.integration_tests.utils import (
     bag_feature,
     binary_feature,
@@ -55,7 +55,7 @@ def run_api_experiment(input_features, output_features):
         TRAINER: {"epochs": 2, BATCH_SIZE: 128},
     }
 
-    model = LudwigModel(config)
+    model = The FlowModel(config)
     return model
 
 
@@ -95,7 +95,7 @@ class Experiment:
         self.ground_truth = test_df[self.output_feature_name]
         # probabilities need to be list of lists containing each row data
         # from the probability columns
-        # ref: https://ludwig-ai.github.io/ludwig-docs/latest/user_guide/api/LudwigModel#evaluate - Return
+        # ref: https://theflow-ai.github.io/theflow-docs/latest/user_guide/api/The FlowModel#evaluate - Return
         self.probability = predictions[self.output_feature_name][PROBABILITY]
         self.probabilities = predictions[self.output_feature_name][PROBABILITIES]
         self.predictions = predictions[self.output_feature_name][PREDICTIONS]
@@ -112,7 +112,7 @@ class Experiment:
             "combiner": {"type": "concat", "output_size": 14},
             TRAINER: {"epochs": 2, BATCH_SIZE: 128},
         }
-        return LudwigModel(config, logging_level=logging.WARN)
+        return The FlowModel(config, logging_level=logging.WARN)
 
 
 def obtain_df_splits(data_csv):
@@ -530,7 +530,7 @@ def test_confidence_thresholding_2thresholds_2d_vis_api(csv_filename):
         ]
 
         # probabilities need to be list of lists containing each row data from the
-        # probability columns ref: https://ludwig-ai.github.io/ludwig-docs/latest/user_guide/api/LudwigModel#evaluate
+        # probability columns ref: https://theflow-ai.github.io/theflow-docs/latest/user_guide/api/The FlowModel#evaluate
         probability1 = predictions.loc[:, feature1_cols].values
         probability2 = predictions.loc[:, feature2_cols].values
 
@@ -604,7 +604,7 @@ def test_confidence_thresholding_2thresholds_3d_vis_api(csv_filename):
         ]
 
         # probabilities need to be list of lists containing each row data from the
-        # probability columns ref: https://ludwig-ai.github.io/ludwig-docs/latest/user_guide/api/LudwigModel#evaluate
+        # probability columns ref: https://theflow-ai.github.io/theflow-docs/latest/user_guide/api/The FlowModel#evaluate
         probability1 = predictions.loc[:, feature1_cols].values
         probability2 = predictions.loc[:, feature2_cols].values
 

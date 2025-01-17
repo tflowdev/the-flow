@@ -19,12 +19,12 @@ import pandas as pd
 import pytest
 import torch
 
-from ludwig.api import LudwigModel
-from ludwig.constants import BATCH_SIZE, TRAINER
-from ludwig.data.dataset_synthesizer import build_synthetic_dataset_df
-from ludwig.utils.data_utils import load_yaml
-from ludwig.utils.inference_utils import to_inference_module_input_from_dataframe
-from ludwig.utils.triton_utils import export_triton, get_inference_modules, POSTPROCESSOR, PREDICTOR, PREPROCESSOR
+from theflow.api import The FlowModel
+from theflow.constants import BATCH_SIZE, TRAINER
+from theflow.data.dataset_synthesizer import build_synthetic_dataset_df
+from theflow.utils.data_utils import load_yaml
+from theflow.utils.inference_utils import to_inference_module_input_from_dataframe
+from theflow.utils.triton_utils import export_triton, get_inference_modules, POSTPROCESSOR, PREDICTOR, PREPROCESSOR
 from tests.integration_tests.utils import (
     binary_feature,
     category_feature,
@@ -75,9 +75,9 @@ def test_triton_torchscript(csv_filename, tmpdir):
     # Generate training data
     training_data_csv_path = generate_data(input_features, output_features, csv_filename)
 
-    # Train Ludwig (Pythonic) model:
-    ludwig_model = LudwigModel(config, backend=backend)
-    ludwig_model.train(
+    # Train The Flow (Pythonic) model:
+    theflow_model = The FlowModel(config, backend=backend)
+    theflow_model.train(
         dataset=training_data_csv_path,
         skip_save_training_description=True,
         skip_save_training_statistics=True,
@@ -87,13 +87,13 @@ def test_triton_torchscript(csv_filename, tmpdir):
         skip_save_processed_input=True,
     )
 
-    # Create graph inference model (Torchscript) from trained Ludwig model.
+    # Create graph inference model (Torchscript) from trained The Flow model.
     triton_path = os.path.join(tmpdir, "triton")
     model_name = "test_triton"
     model_version = "1"
     df = pd.read_csv(training_data_csv_path)
     triton_artifacts = export_triton(
-        model=ludwig_model, data_example=df, model_name=model_name, output_path=triton_path, model_version=model_version
+        model=theflow_model, data_example=df, model_name=model_name, output_path=triton_path, model_version=model_version
     )
 
     # Validate that artifact paths exist.
@@ -115,13 +115,13 @@ def test_triton_torchscript(csv_filename, tmpdir):
     assert triton_postprocessor is not None
 
     # Forward data through models.
-    data_to_predict = to_inference_module_input_from_dataframe(df, ludwig_model.config, load_paths=True, device="cpu")
+    data_to_predict = to_inference_module_input_from_dataframe(df, theflow_model.config, load_paths=True, device="cpu")
     triton_preprocessor_output = triton_preprocessor(*data_to_predict.values())
     triton_predictor_output = triton_predictor(*triton_preprocessor_output)
     triton_postprocessor_output = triton_postprocessor(*triton_predictor_output)
 
     # Get TorchScript inference modules and forward data.
-    inference_modules = get_inference_modules(ludwig_model, "cpu")
+    inference_modules = get_inference_modules(theflow_model, "cpu")
     preprocessor_output = inference_modules[0](data_to_predict)
     predictor_output = inference_modules[1](preprocessor_output)
     postprocessor_output = inference_modules[2](predictor_output)
@@ -166,8 +166,8 @@ def test_triton_exportability(config_path, tmpdir):
     """Tests whether Triton export succeeds for a config."""
     config = load_yaml(config_path)
     dataset = build_synthetic_dataset_df(100, config)
-    ludwig_model = LudwigModel(config)
-    ludwig_model.train(
+    theflow_model = The FlowModel(config)
+    theflow_model.train(
         dataset=dataset,
         skip_save_training_description=True,
         skip_save_training_statistics=True,
@@ -181,7 +181,7 @@ def test_triton_exportability(config_path, tmpdir):
     model_name = "test_triton"
     model_version = "1"
     export_triton(
-        model=ludwig_model,
+        model=theflow_model,
         data_example=dataset.head(10),
         model_name=model_name,
         output_path=triton_path,

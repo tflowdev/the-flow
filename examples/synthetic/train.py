@@ -5,8 +5,8 @@ import tempfile
 
 import yaml
 
-from ludwig.api import LudwigModel
-from ludwig.data.dataset_synthesizer import build_synthetic_dataset_df
+from theflow.api import The FlowModel
+from theflow.data.dataset_synthesizer import build_synthetic_dataset_df
 
 config = yaml.safe_load(
     """
@@ -22,7 +22,7 @@ output_features:
 )
 
 df = build_synthetic_dataset_df(120, config)
-model = LudwigModel(config, logging_level=logging.INFO)
+model = The FlowModel(config, logging_level=logging.INFO)
 
 with tempfile.TemporaryDirectory() as tmpdir:
     model.train(dataset=df, output_directory=tmpdir)

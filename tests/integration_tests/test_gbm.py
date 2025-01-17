@@ -3,11 +3,11 @@ import os
 import numpy as np
 import pytest
 
-from ludwig.api import LudwigModel
-from ludwig.constants import INPUT_FEATURES, MODEL_TYPE, OUTPUT_FEATURES, TRAINER
-from ludwig.error import ConfigValidationError
-from ludwig.globals import MODEL_FILE_NAME
-from ludwig.schema.model_types.base import ModelConfig
+from theflow.api import The FlowModel
+from theflow.constants import INPUT_FEATURES, MODEL_TYPE, OUTPUT_FEATURES, TRAINER
+from theflow.error import ConfigValidationError
+from theflow.globals import MODEL_FILE_NAME
+from theflow.schema.model_types.base import ModelConfig
 from tests.integration_tests import synthetic_test_data
 from tests.integration_tests.utils import binary_feature
 from tests.integration_tests.utils import category_feature as _category_feature
@@ -69,7 +69,7 @@ def _train_and_predict_gbm(input_features, output_features, tmpdir, backend_conf
 
     config = ModelConfig.from_dict(config).to_dict()
 
-    model = LudwigModel(config, backend=backend_config)
+    model = The FlowModel(config, backend=backend_config)
     _, _, output_directory = model.train(
         dataset=dataset_filename,
         output_directory=tmpdir,
@@ -269,7 +269,7 @@ def test_loss_decreases(tmpdir, local_backend):
     }
 
     generated_data = synthetic_test_data.get_generated_data_for_optimizer()
-    model = LudwigModel(config, backend=local_backend)
+    model = The FlowModel(config, backend=local_backend)
     train_stats, _, _ = model.train(
         dataset=generated_data.train_df,
         output_directory=tmpdir,
@@ -297,7 +297,7 @@ def test_save_load(tmpdir, local_backend):
     model.save(tmpdir)
 
     # load model
-    model = LudwigModel.load(tmpdir)
+    model = The FlowModel.load(tmpdir)
     preds, _ = model.predict(dataset=os.path.join(tmpdir, "training.csv"), split="test")
 
     assert init_preds.equals(preds)
@@ -320,7 +320,7 @@ def test_boosting_type_rf_invalid(tmpdir, local_backend):
 def test_goss_deactivate_bagging(tmpdir, local_backend):
     """Test that bagging is disabled for the GOSS boosting type.
 
-    TODO: Re-enable when GOSS is supported: https://github.com/ludwig-ai/ludwig/issues/2988
+    TODO: Re-enable when GOSS is supported: https://github.com/theflow-ai/theflow/issues/2988
     """
     input_features = [number_feature()]
     output_features = [binary_feature()]

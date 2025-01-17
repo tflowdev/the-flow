@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from ludwig.api import LudwigModel
+from theflow.api import The FlowModel
 from tests.integration_tests.utils import generate_data, number_feature
 
 
@@ -19,7 +19,7 @@ def test_number_feature_zscore_normalization_error():
         "output_features": output_features,
     }
 
-    model = LudwigModel(config, backend="local")
+    model = The FlowModel(config, backend="local")
 
     with pytest.raises(RuntimeError):
         model.preprocess(dataset=df)

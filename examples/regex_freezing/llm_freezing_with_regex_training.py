@@ -2,10 +2,10 @@ import logging
 
 import yaml
 
-from ludwig.api import LudwigModel
+from theflow.api import The FlowModel
 
 """
-To inspect model layers in the terminal, type: "ludwig collect_summary -pm resnet18"
+To inspect model layers in the terminal, type: "theflow collect_summary -pm resnet18"
 
 For some models, a HuggingFace Token will be necessary.
 Once you obtain one, use "export HUGGING_FACE_HUB_TOKEN="<api_token>"" in the terminal.
@@ -60,5 +60,5 @@ generation:
 """
 )
 
-model = LudwigModel(config=config_str, logging_level=logging.INFO)
-results = model.train(dataset="ludwig://alpaca")
+model = The FlowModel(config=config_str, logging_level=logging.INFO)
+results = model.train(dataset="theflow://alpaca")

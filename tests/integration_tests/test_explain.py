@@ -5,12 +5,12 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from ludwig.api import LudwigModel
-from ludwig.constants import BATCH_SIZE, BINARY, CATEGORY, MINIMUM_BATCH_SIZE, MODEL_ECD, MODEL_GBM, TYPE
-from ludwig.explain.captum import IntegratedGradientsExplainer
-from ludwig.explain.explainer import Explainer
-from ludwig.explain.explanation import Explanation
-from ludwig.explain.gbm import GBMExplainer
+from theflow.api import The FlowModel
+from theflow.constants import BATCH_SIZE, BINARY, CATEGORY, MINIMUM_BATCH_SIZE, MODEL_ECD, MODEL_GBM, TYPE
+from theflow.explain.captum import IntegratedGradientsExplainer
+from theflow.explain.explainer import Explainer
+from theflow.explain.explanation import Explanation
+from theflow.explain.gbm import GBMExplainer
 from tests.integration_tests.utils import (
     binary_feature,
     category_feature,
@@ -27,7 +27,7 @@ from tests.integration_tests.utils import (
 )
 
 try:
-    from ludwig.explain.captum_ray import RayIntegratedGradientsExplainer
+    from theflow.explain.captum_ray import RayIntegratedGradientsExplainer
 except ImportError:
     RayIntegratedGradientsExplainer = None
 
@@ -89,7 +89,7 @@ def test_explainer_api(explainer_class, model_type, output_feature, additional_c
     ids=["binary", "number", "category"],
 )
 def test_explainer_api_ray(output_feature, tmpdir, ray_cluster_2cpu):
-    from ludwig.explain.captum_ray import RayIntegratedGradientsExplainer
+    from theflow.explain.captum_ray import RayIntegratedGradientsExplainer
 
     run_test_explainer_api(
         RayIntegratedGradientsExplainer,
@@ -105,7 +105,7 @@ def test_explainer_api_ray(output_feature, tmpdir, ray_cluster_2cpu):
 @pytest.mark.slow
 @pytest.mark.distributed
 def test_explainer_api_ray_minimum_batch_size(tmpdir, ray_cluster_2cpu):
-    from ludwig.explain.captum_ray import RayIntegratedGradientsExplainer
+    from theflow.explain.captum_ray import RayIntegratedGradientsExplainer
 
     run_test_explainer_api(
         RayIntegratedGradientsExplainer,
@@ -213,7 +213,7 @@ def run_test_explainer_api(
         config["trainer"] = {"feature_pre_filter": False}
     config.update(additional_config)
 
-    model = LudwigModel(config, logging_level=logging.WARNING, backend=LocalTestBackend())
+    model = The FlowModel(config, logging_level=logging.WARNING, backend=LocalTestBackend())
     model.train(df)
 
     # Explain model

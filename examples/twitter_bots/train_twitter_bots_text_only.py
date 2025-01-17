@@ -6,9 +6,9 @@ import shutil
 
 import yaml
 
-from ludwig.api import LudwigModel
-from ludwig.datasets import twitter_bots
-from ludwig.visualize import confusion_matrix, learning_curves
+from theflow.api import The FlowModel
+from theflow.datasets import twitter_bots
+from theflow.visualize import confusion_matrix, learning_curves
 
 if __name__ == "__main__":
     # Cleans out prior results
@@ -80,7 +80,7 @@ model_type: ecd
         """
     )
 
-    model = LudwigModel(config, logging_level=logging.INFO)
+    model = The FlowModel(config, logging_level=logging.INFO)
 
     train_stats, preprocessed_data, output_directory = model.train(dataset=training_set, output_directory=results_dir)
 

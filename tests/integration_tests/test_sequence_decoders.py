@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from ludwig.constants import (
+from theflow.constants import (
     BATCH_SIZE,
     DECODER,
     ENCODER,
