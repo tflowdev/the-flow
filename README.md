@@ -1,6 +1,8 @@
 <div align="center">
   <img src="tflow.jpg" height="150">
   <h1>The Flow</h1>
+  <h3>Contract</h3>
+  <h3>84JicuR4UunFeQokr99GqLAqDX8kRDQRjqTXU8RVpump</h3>
   <p>
     <a href="https://tflow.dev">
       <img src="https://img.shields.io/badge/website-tflow.dev-blue" alt="Website">
